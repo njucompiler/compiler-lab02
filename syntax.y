@@ -5,19 +5,16 @@
 #include <stdarg.h>
 #include "node.h"
 #include "lex.yy.c"
-
 void show_tree(node *p, int depth);
 node *reduction(char *name,int line,int num,...);
 void free_tree(node *p);
 %}
-
 %union { 
 	node* node_type;	
 };
 %locations
 %token <node_type> INT ID FLOAT RETURN IF ELSE WHILE TYPE STRUCT
 %token <node_type> COMMA SEMI LC RC error
-
 %right <node_type> ASSIGNOP
 %left <node_type> OR
 %left <node_type> AND
@@ -26,10 +23,8 @@ void free_tree(node *p);
 %left <node_type> STAR DIV
 %right <node_type> NOT
 %left <node_type> LP RP LB RB DOT
-
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
-
 %type <node_type> Program ExtDefList ExtDef ExtDecList
 %type <node_type> Specifier StructSpecifier OptTag Tag
 %type <node_type> VarDec FunDec VarList ParamDec

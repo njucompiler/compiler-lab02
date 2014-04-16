@@ -46,7 +46,7 @@ relop		>|<|>=|<=|==|!=
 \] 		{yylval.node_type = init_node("RB",yytext);return RB;}
 ; 		{yylval.node_type = init_node("SEMI",yytext);return SEMI;}
 "," 		{yylval.node_type = init_node("COMMA",yytext);return COMMA;}
-[~!@#$%^&:]	{is_error = 1; printf("Error type A at line %d: Mysterious character\'%s\'\n",yylineno,yytext);}
+[~!@#$%^&<>]	{is_error = 1; printf("Error type A at line %d: Mysterious character\'%s\'\n",yylineno,yytext);}
 "="		{yylval.node_type = init_node("ASSIGNOP", yytext); return ASSIGNOP; }
 struct 	        {yylval.node_type = init_node("STRUCT",yytext);return STRUCT;}
 return 	        {yylval.node_type = init_node("RETUEN",yytext);return RETURN;}

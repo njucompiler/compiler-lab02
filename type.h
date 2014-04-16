@@ -13,9 +13,9 @@ struct Type_
 		// 结构体类型信息是一个链表
 		FieldList structure;
 		//函数
-		Func func;
+		FUNC func;
 	} u;
-	Type *next;
+	//Type *next;
 };
 struct FieldList_
 {
@@ -24,8 +24,12 @@ struct FieldList_
 	FieldList *child;		// 下一个域
 	FieldList *brother;		
 };
-typedef struct Func{
+struct FUNC{
 	int declare;	//0声明，1实现
-	int num;
 	enum{ VOID, INT, FLOAT, ARRAY, STRUCTURE }RETURN;	//返回值类型
-}Func;
+	FuncReturn *brother;
+}
+struct FuncReturn{
+	enum{INT, FLOAT, ARRAY, STRUCTURE}kind;
+	RETURN *next;
+}
