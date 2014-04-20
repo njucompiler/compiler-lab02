@@ -26,10 +26,18 @@ struct FieldList_
 };
 struct FUNC{
 	int declare;	//0声明，1实现
+<<<<<<< HEAD
 	enum{ VOID, INT, FLOAT, ARRAY, STRUCTURE }RETURN;	//返回值类型
 	FuncReturn *brother;
 };
 struct FuncReturn{
 	enum{INT, FLOAT, ARRAY, STRUCTURE}kind;
+=======
+	char RETURN[20];	//返回值类型
+	FuncVar *brother;
+}
+struct FuncVar{
+	char kind[20];
+>>>>>>> 3e39625ae97f9ae85e846ac5da2c8694810d87fb
 	RETURN *next;
 };
