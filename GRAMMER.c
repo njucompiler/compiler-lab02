@@ -43,7 +43,7 @@ VarList	//变量定义list，无操作
 	:	ParamDec COMMA VarList		
 	|	ParamDec		
 	;
-ParamDec //变量定义，插入表或检测重复，包括int，float，struct，未初始化
+ParamDec //params
 	:	Specifier VarDec		
 	;
 CompSt	//无操作
@@ -91,8 +91,8 @@ Exp	//用来检测类型错误，也有是否定义检测
 	|	LP Exp RP			
 	|	MINUS Exp		
 	|	NOT Exp				
-	|	ID LP Args RP	//是否定义	
-	|	ID LP RP	//是否定义		
+	|	ID LP Args RP	//函数调用，检测是否定义	
+	|	ID LP RP	//函数调用，检测是否定义		
 	|	Exp LB Exp RB			
 	|	Exp DOT ID	//结构是否由该成员	
 	|	ID		//是否定义		

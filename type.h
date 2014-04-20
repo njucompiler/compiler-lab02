@@ -28,8 +28,8 @@ struct FUNC{
 	int declare;	//0声明，1实现
 	enum{ VOID, INT, FLOAT, ARRAY, STRUCTURE }RETURN;	//返回值类型
 	FuncReturn *brother;
-}
+};
 struct FuncReturn{
 	enum{INT, FLOAT, ARRAY, STRUCTURE}kind;
 	RETURN *next;
-}
+};

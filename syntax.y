@@ -1,3 +1,4 @@
+
 %{
 #include <ctype.h>
 #include <stdlib.h>
@@ -5,16 +6,24 @@
 #include <stdarg.h>
 #include "node.h"
 #include "lex.yy.c"
+//#include "type.h"
+//#include "symbol_table.h"
+//#include "semantic.h"
+
 void show_tree(node *p, int depth);
 node *reduction(char *name,int line,int num,...);
 void free_tree(node *p);
+void exp_cal(node* exp,node* left,node* op,node* rigth);
+void minus(node* exp,node* left);
 %}
+
 %union { 
 	node* node_type;	
 };
 %locations
 %token <node_type> INT ID FLOAT RETURN IF ELSE WHILE TYPE STRUCT
 %token <node_type> COMMA SEMI LC RC error
+
 %right <node_type> ASSIGNOP
 %left <node_type> OR
 %left <node_type> AND
@@ -23,8 +32,10 @@ void free_tree(node *p);
 %left <node_type> STAR DIV
 %right <node_type> NOT
 %left <node_type> LP RP LB RB DOT
+
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
+
 %type <node_type> Program ExtDefList ExtDef ExtDecList
 %type <node_type> Specifier StructSpecifier OptTag Tag
 %type <node_type> VarDec FunDec VarList ParamDec
@@ -51,12 +62,12 @@ ExtDecList
 	|	VarDec COMMA ExtDecList		{ $$ = reduction("ExtDecList",@1.first_line,3, $1, $2, $3); }
 	;
 Specifier
-	:	TYPE				{ $$ = reduction("Specifier", @1.first_line,1, $1); }
-	|	StructSpecifier			{ $$ = reduction("Specifier", @1.first_line,1, $1); }
+	:	TYPE				{ $$ = reduction("Specifier", @1.first_line,1, $1); strcpy($$->node_value,$1->node_value);}
+	|	StructSpecifier			{ $$ = reduction("Specifier", @1.first_line,1, $1); strcpy($$->node_value,$1->node_value);}
 	;
 StructSpecifier
-	:	STRUCT OptTag LC DefList RC	{ $$ = reduction("StructSpecifier",@1.first_line, 5, $1, $2, $3, $4,$5); }
-	|	STRUCT Tag			{ $$ = reduction("StructSpecifier",@1.first_line, 2, $1, $2); }
+	:	STRUCT OptTag LC DefList RC	{ $$ = reduction("StructSpecifier",@1.first_line, 5, $1, $2, $3, $4,$5); strcpy($$->node_value,$1->node_value);}
+	|	STRUCT Tag			{ $$ = reduction("StructSpecifier",@1.first_line, 2, $1, $2); strcpy($$->node_value,$1->node_value);}
 	;
 OptTag
 	:	ID				{ $$ = reduction("OptTag",@1.first_line, 1, $1); }
@@ -66,7 +77,7 @@ Tag
 	:	ID				{ $$ = reduction("Tag",@1.first_line, 1, $1); }
 	;
 VarDec	
-	:	ID				{ $$ = reduction("VarDec",@1.first_line, 1, $1); }
+	:	ID				{ $$ = reduction("VarDec",@1.first_line, 1, $1); strcpy($$->node_value,$1->node_value);}
 	|	VarDec LB INT RB		{ $$ = reduction("VarDec",@1.first_line, 4, $1, $2, $3, $4); }
 	|	error RB
 	;
@@ -115,24 +126,24 @@ Dec	:	VarDec				{ $$ = reduction("Dec",@1.first_line, 1, $1); }
 	|	VarDec ASSIGNOP Exp		{ $$ = reduction("Dec",@1.first_line, 3, $1, $2, $3); }
 	;
 Exp
-	:	Exp ASSIGNOP Exp		{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
-	|	Exp AND Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
-	|	Exp OR Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
-	|	Exp RELOP Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
-	|	Exp PLUS Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
-	|	Exp MINUS Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
-	|	Exp STAR Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
-	|	Exp DIV Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
+	:	Exp ASSIGNOP Exp		{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
+	|	Exp AND Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
+	|	Exp OR Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
+	|	Exp RELOP Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
+	|	Exp PLUS Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
+	|	Exp MINUS Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
+	|	Exp STAR Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
+	|	Exp DIV Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
 	|	LP Exp RP			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
-	|	MINUS Exp			{ $$ = reduction("Exp",@1.first_line, 2, $1, $2); }
+	|	MINUS Exp			{ $$ = reduction("Exp",@1.first_line, 2, $1, $2); minus($$,$2);}
 	|	NOT Exp				{ $$ = reduction("Exp",@1.first_line, 2, $1, $2); }
 	|	ID LP Args RP			{ $$ = reduction("Exp",@1.first_line, 4, $1, $2, $3, $4); }
 	|	ID LP RP			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
 	|	Exp LB Exp RB			{ $$ = reduction("Exp",@1.first_line, 4, $1, $2, $3, $4); }
 	|	Exp DOT ID			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
 	|	ID				{ $$ = reduction("Exp",@1.first_line, 1, $1); }
-	|	INT				{ $$ = reduction("Exp",@1.first_line, 1, $1); }
-	|	FLOAT				{ $$ = reduction("Exp",@1.first_line, 1, $1); }
+	|	INT				{ $$ = reduction("Exp",@1.first_line, 1, $1); $$->type = 1;$$->node_int = $1->node_int;}
+	|	FLOAT				{ $$ = reduction("Exp",@1.first_line, 1, $1); $$->type = 2;$$->node_float = $1->node_float;}
 	|	error RP
 	|	error RB
 	;
@@ -154,7 +165,7 @@ node *reduction(char *name,int line,int num,...){
 	p->type = 1;
 	p->line = line;
 	strcpy(p->name,name);
-	strcpy(p->node_value,name);
+	//strcpy(p->node_value,name);
 	va_start(ap,num);
 	if(num == 0){
 		va_end(ap);
@@ -175,6 +186,61 @@ node *reduction(char *name,int line,int num,...){
 	}
 } 
 
+void exp_cal(node* exp,node* left,node* op,node* rigth){
+	if(left->type != rigth->type){
+			printf("Error type 16 at line %d:Type mismatched",exp->line);
+	}
+	else{
+		exp->type = left->type;
+		if(strcmp(op->name,"ASSIGNOP")==0){//ASSIGNOP
+			if(left->type == 1)
+				exp->node_int = rigth->node_int;
+			else
+				exp->node_float = rigth->node_float;
+		}
+		else if(strcmp(op->name,"AND")==0){//AND
+
+		}
+		else if(strcmp(op->name,"OR")==0){//OR
+
+		}
+		else if(strcmp(op->name,"PLUS")==0){//PLUS
+			if(left->type == 1)
+				exp->node_int = left->node_int + rigth->node_int;
+			else
+				exp->node_float = left->node_float + rigth->node_float;
+		}
+		else if(strcmp(op->name,"MINUS")==0){//MINUS
+			if(left->type == 1)
+				exp->node_int = left->node_int - rigth->node_int;
+			else
+				exp->node_float = left->node_float - rigth->node_float;
+		}
+		else if(strcmp(op->name,"STAR")==0){//STAR
+			if(left->type == 1)
+				exp->node_int = left->node_int * rigth->node_int;
+			else
+				exp->node_float = left->node_float * rigth->node_float;
+		}
+		else if(strcmp(op->name,"DIV")==0){//DIV
+			if(left->type == 1)
+				exp->node_int = left->node_int / rigth->node_int;
+			else
+				exp->node_float = left->node_float / rigth->node_float;
+		}
+	}
+
+}
+
+void minus(node* exp,node* left){
+	exp->type = left->type;
+	if(left->type == 1){
+		exp->node_int = left->node_int;
+	}
+	else
+		exp->node_float = left->node_float;
+}
+
 void show_tree(node *p, int depth) {	
 	//printf("\n");
 	//printf("depth:%d\n",depth);
@@ -190,9 +256,21 @@ void show_tree(node *p, int depth) {
 		printf(": %d",p->node_int);
 	else if(strcmp(name,"FLOAT")==0)
 		printf(": %f",p->node_float);
+	else if(strcmp(name,"StructSpecifier")==0){
+		printf(": %s",p->node_value);
+	}
+	else if(strcmp(name,"Specifier")==0){
+		printf(": %s",p->node_value);
+	}
 	else if(strcmp(name,"ID")==0||strcmp(name,"TYPE")==0)
 		printf(": %s",p->node_value);
-	else if(p->type == 1)
+	else if(strcmp(name,"Exp")==0){
+		if(p->type == 1)
+			printf(" type1:%d",p->node_int);
+		else
+			printf(" type2:%f",p->node_float);
+	}
+	else 
 		printf(" (%d)",p->line);
 	printf("\n");
 	if(p->child != NULL)
