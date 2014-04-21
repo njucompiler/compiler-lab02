@@ -27,7 +27,7 @@ struct Type_
 		FieldList structure;
 		//函数
 		struct FUNC func;
-	} u;
+	};
 	//Type *next;
 	char name[20];
 };

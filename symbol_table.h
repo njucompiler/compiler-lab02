@@ -40,29 +40,29 @@ int Find(char *name){
 void INT_Insert(char *name,int value){
 	int i = hash_pjw(name);
 	if(SymbolTable[i] == NULL){
-		SymbolTable[i] = (FieldList)malloc(sizeof(FieldList_));
-		memset(SymbolTable[i],0,sizeof(FieldList_));
+		SymbolTable[i] = (FieldList)malloc(sizeof(struct FieldList_));
+		memset(SymbolTable[i],0,sizeof(struct FieldList_));
 		strcpy(SymbolTable[i]->name,name);
-		SymbolTable[i]->type->kind = INT;
+		SymbolTable[i]->type->kind = Int;
 		SymbolTable[i]->type->INT = value;
 		SymbolTable[i]->child = NULL;
 	}
 	FieldList p = SymbolTable[i];
 	p = p->child;
 	while(p->child!=NULL) p=p->child;
-	p->child = (FieldList)malloc(sizeof(FieldList_));
+	p->child = (FieldList)malloc(sizeof(struct FieldList_));
 	p = p->child;
-	memset(p,0,sizeof(FieldList_));
+	memset(p,0,sizeof(struct FieldList_));
 	strcpy(p->name,name);
 	p->type->kind = INT;
 	p->type->INT = value;
 	p->child = NULL;
 }
 void FLOAT_Insert(char *name,float value){
-	float i = hash_pjw(name);
+	int i = hash_pjw(name);
 	if(SymbolTable[i] == NULL){
-		SymbolTable[i] = (FieldList)malloc(sizeof(FieldList_));
-		memset(SymbolTable[i],0,sizeof(FieldList_));
+		SymbolTable[i] = (FieldList)malloc(sizeof(struct FieldList_));
+		memset(SymbolTable[i],0,sizeof(struct FieldList_));
 		strcpy(SymbolTable[i]->name,name);
 		SymbolTable[i]->type->kind = FLOAT;
 		SymbolTable[i]->type->FLOAT = value;
@@ -72,9 +72,9 @@ void FLOAT_Insert(char *name,float value){
 		FieldList p = SymbolTable[i];
 		p = p->child;
 		while(p->child!=NULL) p=p->child;
-		p->child = (FieldList)malloc(sizeof(FieldList_));
+		p->child = (FieldList)malloc(sizeof(struct FieldList_));
 		p=p->child;
-		memset(p,0,sizeof(FieldList_));
+		memset(p,0,sizeof(struct FieldList_));
 		strcpy(p->name,name);
 		p->type->kind = FLOAT;
 		p->type->FLOAT = value;
@@ -89,17 +89,17 @@ void FUNC_Insert(node *ExtDef){
 		//node *ParamDec = p->child;
 		int i = hash_pjw(FunDec->child->name);
 		if(SymbolTable[i] == NULL){
-			SymbolTable[i] = (FieldList)malloc(sizeof(FieldList_));
-			memset(SymbolTable[i],0,sizeof(FieldList_));
+			SymbolTable[i] = (FieldList)malloc(sizeof(struct FieldList_));
+			memset(SymbolTable[i],0,sizeof(struct FieldList_));
 			strcpy(SymbolTable[i]->name,FunDec->child->name);
 			SymbolTable[i]->type->kind = FUNC;
 			//node *DefList = q1->child->brother->brother->brother;		//STRUCT(child) OptTag(b) LC(b) DefList(b) RC(b)
 			/*deflist (c)def (b)deflist*/
 			//FieldList *temp = SymbolTable[i];
 			if(strcmp(Specifier->child->name,"INT")==0)
-				strcpy(SymbolTable[i]->type->Func->RETURN,"INT");
+				strcpy(SymbolTable[i]->type->func->RETURN,"INT");
 			if(strcmp(Specifier->child->name,"FLOAT")==0)
-				strcpy(SymbolTable[i]->type->Func->RETURN,"FLOAT");
+				strcpy(SymbolTable[i]->type->func->RETURN,"FLOAT");
 			else		//StructSpecifier STRUCT OptTag ID
 				strcpy(SymbolTable[i]->child->Func->RETURN,Specifier->child->child->brother->child->name);
 			SymbolTable[i]->child = NULL;
@@ -107,7 +107,7 @@ void FUNC_Insert(node *ExtDef){
 			//此处可能报错
 
 			node *ParamDec = VarList->child;
-			FuncVar *temp = (FuncVar*)malloc(sizeof(FuncVar));
+			FuncVar *temp = (FuncVar*)malloc(sizeof(FuncVars));
 			temp->brother =NULL:
 			SymbolTable[i]->type->func->brother = temp;
 			node *Spec = VarList->child->child;
@@ -123,7 +123,7 @@ void FUNC_Insert(node *ExtDef){
 				//temp->brother = (FieldList*)malloc(sizeof(FieldList_));
 				//temp = temp->brother;				
 				ParamDec = VarList->child;
-				FuncVar *tem = (FuncVar*)malloc(sizeof(FuncVar));
+				FuncVar *tem = (FuncVar*)malloc(sizeof(FuncVars));
 				temp->brother = tem;
 				temp = temp->brother;
 				Spec = VarList->child->child;
@@ -142,7 +142,7 @@ void FUNC_Insert(node *ExtDef){
 			FieldList p = SymbolTable[i];
 			p = p->child;
 			while(p->child!=NULL) p=p->child;
-			p->child = (FieldList)malloc(sizeof(FieldList_));
+			p->child = (FieldList)malloc(sizeof(struct FieldList_));
 			p = p->child;
 			strcpy(p->name,FunDec->child->name);
 			p->type->kind = FUNC;
@@ -150,9 +150,9 @@ void FUNC_Insert(node *ExtDef){
 			/*deflist (c)def (b)deflist*/
 			//FieldList *temp = SymbolTable[i];
 			if(strcmp(Specifier->child->name,"INT")==0)
-				strcpy(p->type->Func->RETURN,"INT");
+				strcpy(p->type->func->RETURN,"INT");
 			if(strcmp(Specifier->child->name,"FLOAT")==0)
-				strcpy(p->type->Func->RETURN,"FLOAT");
+				strcpy(p->type->func->RETURN,"FLOAT");
 			else		//StructSpecifier STRUCT OptTag ID
 				strcpy(p->child->Func->RETURN,Specifier->child->child->brother->child->name);
 			p->child = NULL;
@@ -160,7 +160,7 @@ void FUNC_Insert(node *ExtDef){
 			//此处可能报错
 
 			node *ParamDec = VarList->child;
-			FuncVar *temp = (FuncVar*)malloc(sizeof(FuncVar));
+			FuncVar *temp = (FuncVar*)malloc(sizeof(FuncVars));
 			temp->brother =NULL:
 			p->type->func->brother = temp;
 			node *Spec = VarList->child->child;
@@ -176,7 +176,7 @@ void FUNC_Insert(node *ExtDef){
 				//temp->brother = (FieldList*)malloc(sizeof(FieldList_));
 				//temp = temp->brother;				
 				ParamDec = VarList->child;
-				FuncVar *tem = (FuncVar*)malloc(sizeof(FuncVar));
+				FuncVar *tem = (FuncVar*)malloc(sizeof(FuncVars));
 				temp->brother = tem;
 				temp = temp->brother;
 				Spec = VarList->child->child;
@@ -193,15 +193,15 @@ void FUNC_Insert(node *ExtDef){
 	else{
 		int i = hash_pjw(name);
 		if(SymbolTable[i] == NULL){ 
-			SymbolTable[i] = (FieldList)malloc(sizeof(FieldList_));
-			memset(SymbolTable[i],0,sizeof(FieldList_));			
+			SymbolTable[i] = (FieldList)malloc(sizeof(struct FieldList_));
+			memset(SymbolTable[i],0,sizeof(struct FieldList_));			
 			strcpy(SymbolTable[i]->name,Specifier->child->name);
 			SymbolTable[i]->type->kind = FUNC;
-			SymbolTable[i]->type->Func->brother = NULL;
+			SymbolTable[i]->type->func->brother = NULL;
 			if(strcmp(Specifier->child->name,"INT")==0)
-				strcpy(SymbolTable[i]->type->Func->RETURN,"INT");
+				strcpy(SymbolTable[i]->type->func->RETURN,"INT");
 			if(strcmp(Specifier->child->name,"FLOAT")==0)
-				strcpy(SymbolTable[i]->type->Func->RETURN,"FLOAT");
+				strcpy(SymbolTable[i]->type->func->RETURN,"FLOAT");
 			else		//StructSpecifier STRUCT OptTag ID
 				strcpy(SymbolTable[i]->child->Func->RETURN,Specifier->child->child->brother->child->name);
 			SymbolTable[i]->child = NULL;
@@ -211,16 +211,16 @@ void FUNC_Insert(node *ExtDef){
 			FieldList p = SymbolTable[i];
 			p = p->child;
 			while(p->child!=NULL) p=p->child;
-			p->child = (FieldList)malloc(sizeof(FieldList_));
+			p->child = (FieldList)malloc(sizeof(struct FieldList_));
 			p = p->child;
-			memset(p,0,sizeof(FieldList_));
+			memset(p,0,sizeof(struct FieldList_));
 			strcpy(p->name,Specifier->child->name);
 			p->type->kind = FUNC;
-			p->type->Func->brother = NULL;
+			p->type->func->brother = NULL;
 			if(strcmp(Specifier->child->name,"INT")==0)
-				strcpy(p->type->Func->RETURN,"INT");
+				strcpy(p->type->func->RETURN,"INT");
 			if(strcmp(Specifier->child->name,"FLOAT")==0)
-				strcpy(p->type->Func->RETURN,"FLOAT");
+				strcpy(p->type->func->RETURN,"FLOAT");
 			else		//StructSpecifier STRUCT OptTag ID
 				strcpy(p->child->Func->RETURN,Specifier->child->child->brother->child->name);
 			p->child = NULL;
@@ -234,15 +234,15 @@ void STRUCT_Insert(node *p){
 		node *q1 = p->child->brother;
 		int i = hash_pjw(q1->child->name);
 		if(SymbolTable[i] == NULL){
-			SymbolTable[i] = (FieldList)malloc(sizeof(FieldList_));
-			memset(SymbolTable[i],0,sizeof(FieldList_));
+			SymbolTable[i] = (FieldList)malloc(sizeof(struct FieldList_));
+			memset(SymbolTable[i],0,sizeof(struct FieldList_));
 			strcpy(SymbolTable[i]->name,q1->child->name);
 			SymbolTable[i]->type->kind = STRUCTURE;
 			node *DefList = q1->child->brother->brother->brother;		//STRUCT(child) OptTag(b) LC(b) DefList(b) RC(b)
 			/*deflist (c)def (b)deflist*/
 			FieldList temp = SymbolTable[i];
 			while(DefList!=NULL){
-				temp->brother = (FieldList)malloc(sizeof(FieldList_));
+				temp->brother = (FieldList)malloc(sizeof(struct FieldList_));
 				temp = temp->brother;				
 				node *TYPEorSTRUCT = DefList->child->child->child;
 				if(strcmp(TYPEorSTRUCT->name,"INT"))
@@ -259,7 +259,7 @@ void STRUCT_Insert(node *p){
 			FieldList p = SymbolTable[i];
 			p = p->child;
 			while(p->child!=NULL) p=p->child;
-			p->child = (FieldList)malloc(sizeof(FieldList_));
+			p->child = (FieldList)malloc(sizeof(struct FieldList_));
 			p = p->child;
 			strcpy(p->name,q1->child->name);
 			SymbolTable[i]->type->kind = STRUCTURE;
@@ -267,7 +267,7 @@ void STRUCT_Insert(node *p){
 			/*deflist (c)def (b)deflist*/
 			FieldList temp = p;
 			while(DefList!=NULL){
-				temp->brother = (FieldList)malloc(sizeof(FieldList_));
+				temp->brother = (FieldList)malloc(sizeof(struct FieldList_));
 				temp = temp->brother;				
 				node *TYPEorSTRUCT = DefList->child->child->child;
 				if(strcmp(TYPEorSTRUCT->name,"INT"))
@@ -294,8 +294,8 @@ void ARRAY_Insert(node *VarDec,char *name){
 	int i = hash_pjw(p->child->name);
 
 	if(SymbolTable[i] == NULL){
-		SymbolTable[i] = (FieldList)malloc(sizeof(FieldList_));
-		memset(SymbolTable[i],0,sizeof(FieldList_));
+		SymbolTable[i] = (FieldList)malloc(sizeof(struct FieldList_));
+		memset(SymbolTable[i],0,sizeof(struct FieldList_));
 		strcpy(SymbolTable[i]->name,p->child->name);
 		type q = SymbolTable[i]->type;
 		int m = j-1;
@@ -318,7 +318,7 @@ void ARRAY_Insert(node *VarDec,char *name){
 		FieldList temp = SymbolTable[i];
 		temp = temp->child;
 		while(temp->child!=NULL) temp=temp->child;
-		temp->child = (FieldList)malloc(sizeof(FieldList_));
+		temp->child = (FieldList)malloc(sizeof(struct FieldList_));
 		temp = temp->child;
 		strcpy(temp->name,p->child->name);
 		type q = temp->type;
