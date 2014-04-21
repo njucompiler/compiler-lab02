@@ -2,16 +2,16 @@ typedef struct Type_* Type;
 typedef struct FieldList_* FieldList;
 
 
-typedef struct FuncVar{
+typedef struct TFuncVar{
 
-	 struct FuncVar* next;
+	 struct TFuncVar* next;
 	 char kind[20];
-}FuncVars;
+}FuncVar;
 
 typedef struct FUNC{
 	int declare;	//0声明，1实现
 	char RETURN[20];	//返回值类型
-	struct FuncVar *brother;
+	FuncVar *brother;
 }TFUNC;
 
 struct Type_
@@ -33,8 +33,8 @@ struct Type_
 };
 struct FieldList_
 {
-	char* name;	// 域的名字
+	char name[20];	// 域的名字
 	Type type;	// 域的类型
-	FieldList *child;	// 下一个域
-	FieldList *brother;	
+	FieldList child;	// 下一个域
+	FieldList brother;	
 };

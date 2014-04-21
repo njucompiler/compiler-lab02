@@ -13,8 +13,8 @@
 void show_tree(node *p, int depth);
 node *reduction(char *name,int line,int num,...);
 void free_tree(node *p);
-void exp_cal(node* exp,node* left,node* op,node* rigth);
-void minus(node* exp,node* left);
+//void exp_cal(node* exp,node* left,node* op,node* rigth);
+//void minus(node* exp,node* left);
 %}
 
 %union { 
@@ -45,8 +45,7 @@ void minus(node* exp,node* left);
 
 %%
 Program		
-	:	ExtDefList			{$$ = reduction("Program", @1.first_line
-,1, $1);printf("\n");if(!is_error)show_tree($$, 0); free_tree($$); }
+	:	ExtDefList			{$$ = reduction("Program", @1.first_line,1, $1);printf("\n");if(!is_error){show_tree($$, 0);sem_analysis($$);} free_tree($$); }
 	;
 ExtDefList
 	:	ExtDef ExtDefList		{ $$ = reduction("ExtDefList", @1.first_line,2,$1, $2); }
@@ -55,7 +54,7 @@ ExtDefList
 ExtDef
 	:	Specifier ExtDecList SEMI	{ $$ = reduction("ExtDef",@1.first_line,3, $1, $2, $3); }
 	|	Specifier SEMI			{ $$ = reduction("ExtDef",@1.first_line,2, $1, $2); }
-	|	Specifier FunDec CompSt		{ $$ = reduction("ExtDef",@1.first_line,3, $1, $2, $3); }
+	|	Specifier FunDec CompSt		{ $$ = reduction("ExtDef",@1.first_line,3, $1, $2, $3);}
 	;
 ExtDecList	
 	:	VarDec				{ $$ = reduction("ExtDecList",@1.first_line,1, $1); }
@@ -115,7 +114,7 @@ DefList
 	|					{ $$ = reduction("DefList",@$.first_line, 0); }
 	;
 Def
-	:	Specifier DecList SEMI		{ $$ = reduction("Def",@1.first_line, 3, $1, $2, $3); Def_anly($1);}
+	:	Specifier DecList SEMI		{ $$ = reduction("Def",@1.first_line, 3, $1, $2, $3);}
 	|	error SEMI
 	;
 DecList	
@@ -126,24 +125,24 @@ Dec	:	VarDec				{ $$ = reduction("Dec",@1.first_line, 1, $1); strcpy($$->node_va
 	|	VarDec ASSIGNOP Exp		{ $$ = reduction("Dec",@1.first_line, 3, $1, $2, $3); strcpy($$->node_value,$1->node_value);}
 	;
 Exp
-	:	Exp ASSIGNOP Exp		{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
-	|	Exp AND Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
-	|	Exp OR Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
-	|	Exp RELOP Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
-	|	Exp PLUS Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
-	|	Exp MINUS Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
-	|	Exp STAR Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
-	|	Exp DIV Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
-	|	LP Exp RP			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
-	|	MINUS Exp			{ $$ = reduction("Exp",@1.first_line, 2, $1, $2); minus($$,$2);}
-	|	NOT Exp				{ $$ = reduction("Exp",@1.first_line, 2, $1, $2); }
-	|	ID LP Args RP			{ $$ = reduction("Exp",@1.first_line, 4, $1, $2, $3, $4); }
-	|	ID LP RP			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
-	|	Exp LB Exp RB			{ $$ = reduction("Exp",@1.first_line, 4, $1, $2, $3, $4); }
-	|	Exp DOT ID			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); }
-	|	ID				{ $$ = reduction("Exp",@1.first_line, 1, $1); }
-	|	INT				{ $$ = reduction("Exp",@1.first_line, 1, $1); $$->type = 1;$$->node_int = $1->node_int;}
-	|	FLOAT				{ $$ = reduction("Exp",@1.first_line, 1, $1); $$->type = 2;$$->node_float = $1->node_float;}
+	:	Exp ASSIGNOP Exp		{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); $$->type = 7;}
+	|	Exp AND Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); $$->type = 8;}
+	|	Exp OR Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); $$->type = 9;}
+	|	Exp RELOP Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); $$->type = 10;}
+	|	Exp PLUS Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); $$->type = 11;}
+	|	Exp MINUS Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); $$->type = 12;}
+	|	Exp STAR Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); $$->type = 13;}
+	|	Exp DIV Exp			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); $$->type = 14;}
+	|	LP Exp RP			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); $$->type = 15;}
+	|	MINUS Exp			{ $$ = reduction("Exp",@1.first_line, 2, $1, $2); $$->type = 16;}
+	|	NOT Exp				{ $$ = reduction("Exp",@1.first_line, 2, $1, $2); $$->type = 17;}
+	|	ID LP Args RP			{ $$ = reduction("Exp",@1.first_line, 4, $1, $2, $3, $4); $$->type = 18;}
+	|	ID LP RP			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); $$->type = 19;}
+	|	Exp LB Exp RB			{ $$ = reduction("Exp",@1.first_line, 4, $1, $2, $3, $4);$$->type = 20;}
+	|	Exp DOT ID			{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); $$->type = 21;}
+	|	ID				{ $$ = reduction("Exp",@1.first_line, 1, $1); $$->type = 22;}
+	|	INT				{ $$ = reduction("Exp",@1.first_line, 1, $1); $$->type = 23;}
+	|	FLOAT				{ $$ = reduction("Exp",@1.first_line, 1, $1); $$->type = 24;}
 	|	error RP
 	|	error RB
 	;
@@ -185,18 +184,20 @@ node *reduction(char *name,int line,int num,...){
 	return p;
 	}
 } 
-
+/*
 void exp_cal(node* exp,node* left,node* op,node* rigth){//the anlysis of node exp
 	if(left->type != rigth->type){
-			printf("Error type 16 at line %d:Type mismatched",exp->line);
+		//printf("Error type 16 at line %d:Type mismatched",exp->line);
+		return;
 	}
 	else{
-		exp->type = left->type;
+		if(left->type == 1 || left->type == 5)
+			exp->type = 5;
+		else
+			exp->type = 6;
+
 		if(strcmp(op->name,"ASSIGNOP")==0){//ASSIGNOP
-			if(left->type == 1)
-				exp->node_int = rigth->node_int;
-			else
-				exp->node_float = rigth->node_float;
+
 		}
 		else if(strcmp(op->name,"AND")==0){//AND
 
@@ -234,12 +235,12 @@ void exp_cal(node* exp,node* left,node* op,node* rigth){//the anlysis of node ex
 
 void minus(node* exp,node* left){
 	exp->type = left->type;
-	if(left->type == 1){
+	if(left->type == 1 || left->type == 5){
 		exp->node_int = left->node_int;
 	}
 	else
 		exp->node_float = left->node_float;
-}
+}*/
 
 void show_tree(node *p, int depth) {	
 	//printf("\n");
