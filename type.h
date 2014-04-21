@@ -2,7 +2,7 @@ typedef struct Type_* Type;
 typedef struct FieldList_* FieldList;
 struct Type_
 {
-	enum { INT, FLOAT, ARRAY, STRUCTURE, FUNC } kind;
+	enum { Int, Float, ARRAY, STRUCTURE, FUNC } kind;
 	union
 		{// 基本类型
 		int INT;
@@ -15,6 +15,7 @@ struct Type_
 		FUNC func;
 	} u;
 	//Type *next;
+	char name[20];
 };
 struct FieldList_
 {
@@ -23,7 +24,7 @@ struct FieldList_
 	FieldList *child;	// 下一个域
 	FieldList *brother;	
 	};
-	struct FUNC{
+struct FUNC{
 	int declare;	//0声明，1实现
 	char RETURN[20];	//返回值类型
 	FuncVar *brother;
