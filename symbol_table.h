@@ -43,7 +43,7 @@ void INT_Insert(char *name,int value){
 		SymbolTable[i] = (FieldList)malloc(sizeof(struct FieldList_));
 		memset(SymbolTable[i],0,sizeof(struct FieldList_));
 		strcpy(SymbolTable[i]->name,name);
-		SymbolTable[i]->type->kind = INT;
+		SymbolTable[i]->type->kind = Int;
 		SymbolTable[i]->type->INT = value;
 		SymbolTable[i]->child = NULL;
 	}
@@ -54,7 +54,7 @@ void INT_Insert(char *name,int value){
 	p = p->child;
 	memset(p,0,sizeof(struct FieldList_));
 	strcpy(p->name,name);
-	p->type->kind = INT;
+	p->type->kind = Int;
 	p->type->INT = value;
 	p->child = NULL;
 }
@@ -64,7 +64,7 @@ void FLOAT_Insert(char *name,float value){
 		SymbolTable[i] = (FieldList)malloc(sizeof(struct FieldList_));
 		memset(SymbolTable[i],0,sizeof(struct FieldList_));
 		strcpy(SymbolTable[i]->name,name);
-		SymbolTable[i]->type->kind = FLOAT;
+		SymbolTable[i]->type->kind = Float;
 		SymbolTable[i]->type->FLOAT = value;
 		SymbolTable[i]->child = NULL;
 	}
@@ -76,7 +76,7 @@ void FLOAT_Insert(char *name,float value){
 		p=p->child;
 		memset(p,0,sizeof(struct FieldList_));
 		strcpy(p->name,name);
-		p->type->kind = FLOAT;
+		p->type->kind = Float;
 		p->type->FLOAT = value;
 		p->child = NULL;
 	}
@@ -246,9 +246,9 @@ void STRUCT_Insert(node *p){
 				temp = temp->brother;				
 				node *TYPEorSTRUCT = DefList->child->child->child;
 				if(strcmp(TYPEorSTRUCT->name,"INT"))
-					temp->type->kind = INT;
+					temp->type->kind = Int;
 				else if(strcmp(TYPEorSTRUCT->name,"FLOAT"))
-					temp->type->kind = FLOAT;
+					temp->type->kind = Float;
 				else temp->type->kind = STRUCT;
 				node *DefList = DefList->child->brother;
 				temp->child = NULL;
@@ -271,9 +271,9 @@ void STRUCT_Insert(node *p){
 				temp = temp->brother;				
 				node *TYPEorSTRUCT = DefList->child->child->child;
 				if(strcmp(TYPEorSTRUCT->name,"INT"))
-					temp->type->kind = INT;
+					temp->type->kind = Int;
 				else if(strcmp(TYPEorSTRUCT->name,"FLOAT"))
-					temp->type->kind = FLOAT;
+					temp->type->kind = Float;
 				else temp->type->kind = STRUCT;
 				temp->child = NULL;
 				temp->brother = NULL:
@@ -306,9 +306,9 @@ void ARRAY_Insert(node *VarDec,char *name){
 		}
 		q->array.size = a[m];
 		if(strcmp(name,"INT")==0)
-			q->array.elem->kind = INT;
+			q->array.elem->kind = Int;
 		if(strcmp(name,"FLOAT")==0)
-			q->array.elem->kind = FLOAT;
+			q->array.elem->kind = Float;
 		else {
 			q->array.elem->kind = STRUCTURE;
 			strcpy(q->array.elem->name,name);
@@ -330,9 +330,9 @@ void ARRAY_Insert(node *VarDec,char *name){
 		}
 		q->array.size = a[m];
 		if(strcmp(name,"INT")==0)
-			q->array.elem->kind = INT;
+			q->array.elem->kind = Int;
 		if(strcmp(name,"FLOAT")==0)
-			q->array.elem->kind = FLOAT;
+			q->array.elem->kind = Float;
 		else {
 			q->array.elem->kind = STRUCTURE;
 			strcpy(q->array.elem->name,name);
