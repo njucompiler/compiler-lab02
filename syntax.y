@@ -8,7 +8,7 @@
 #include "lex.yy.c"
 //#include "type.h"
 //#include "symbol_table.h"
-//#include "semantic.h"
+#include "semantic.h"
 
 void show_tree(node *p, int depth);
 node *reduction(char *name,int line,int num,...);
@@ -63,27 +63,27 @@ ExtDecList
 	;
 Specifier
 	:	TYPE				{ $$ = reduction("Specifier", @1.first_line,1, $1); strcpy($$->node_value,$1->node_value);}
-	|	StructSpecifier			{ $$ = reduction("Specifier", @1.first_line,1, $1); strcpy($$->node_value,$1->node_value);}
+	|	StructSpecifier			{ $$ = reduction("Specifier", @1.first_line,1, $1); $$->type = 4; strcpy($$->node_value,$1->node_value);}
 	;
 StructSpecifier
-	:	STRUCT OptTag LC DefList RC	{ $$ = reduction("StructSpecifier",@1.first_line, 5, $1, $2, $3, $4,$5); strcpy($$->node_value,$1->node_value);}
-	|	STRUCT Tag			{ $$ = reduction("StructSpecifier",@1.first_line, 2, $1, $2); strcpy($$->node_value,$1->node_value);}
+	:	STRUCT OptTag LC DefList RC	{ $$ = reduction("StructSpecifier",@1.first_line, 5, $1, $2, $3, $4,$5); $$->type = 4;strcpy($$->node_value,$2->node_value);}
+	|	STRUCT Tag			{ $$ = reduction("StructSpecifier",@1.first_line, 2, $1, $2); $$->type = 4;strcpy($$->node_value,$2->node_value);}
 	;
 OptTag
-	:	ID				{ $$ = reduction("OptTag",@1.first_line, 1, $1); }
+	:	ID				{ $$ = reduction("OptTag",@1.first_line, 1, $1); strcpy($$->node_value,$1->node_value);}
 	|					{ $$ = reduction("OptTag",@$.first_line, 0); }
 	;
 Tag
-	:	ID				{ $$ = reduction("Tag",@1.first_line, 1, $1); }
+	:	ID				{ $$ = reduction("Tag",@1.first_line, 1, $1); strcpy($$->node_value,$1->node_value);}
 	;
 VarDec	
 	:	ID				{ $$ = reduction("VarDec",@1.first_line, 1, $1); strcpy($$->node_value,$1->node_value);}
-	|	VarDec LB INT RB		{ $$ = reduction("VarDec",@1.first_line, 4, $1, $2, $3, $4); }
+	|	VarDec LB INT RB		{ $$ = reduction("VarDec",@1.first_line, 4, $1, $2, $3, $4); $$->type = 3;strcpy($$->node_value,$1->node_value);}
 	|	error RB
 	;
 FunDec
-	:	ID LP VarList RP		{ $$ = reduction("FunDec", @1.first_line,4, $1, $2, $3, $4); }
-	|	ID LP RP			{ $$ = reduction("FunDec",@1.first_line, 3, $1, $2, $3); }
+	:	ID LP VarList RP		{ $$ = reduction("FunDec", @1.first_line,4, $1, $2, $3, $4); strcpy($$->node_value,$1->node_value);}
+	|	ID LP RP			{ $$ = reduction("FunDec",@1.first_line, 3, $1, $2, $3); strcpy($$->node_value,$1->node_value);}
 	|	error RP
 	;
 VarList	
@@ -91,7 +91,7 @@ VarList
 	|	ParamDec			{ $$ = reduction("VarList",@1.first_line,1, $1); }
 	;
 ParamDec
-	:	Specifier VarDec		{ $$ = reduction("ParamDec",@1.first_line, 2, $1, $2); }
+	:	Specifier VarDec		{ $$ = reduction("ParamDec",@1.first_line, 2, $1, $2); strcpy($$->node_value,$1->node_value);}
 	;
 CompSt
 	:	LC DefList StmtList RC		{ $$ = reduction("CompSt",@1.first_line, 4, $1, $2, $3, $4); }
@@ -115,15 +115,15 @@ DefList
 	|					{ $$ = reduction("DefList",@$.first_line, 0); }
 	;
 Def
-	:	Specifier DecList SEMI		{ $$ = reduction("Def",@1.first_line, 3, $1, $2, $3); }
+	:	Specifier DecList SEMI		{ $$ = reduction("Def",@1.first_line, 3, $1, $2, $3); Def_anly($1);}
 	|	error SEMI
 	;
 DecList	
 	:	Dec				{ $$ = reduction("DecList",@1.first_line, 1, $1); }
 	|	Dec COMMA DecList		{ $$ = reduction("DecList",@1.first_line, 3, $1, $2, $3); }
 	;
-Dec	:	VarDec				{ $$ = reduction("Dec",@1.first_line, 1, $1); }
-	|	VarDec ASSIGNOP Exp		{ $$ = reduction("Dec",@1.first_line, 3, $1, $2, $3); }
+Dec	:	VarDec				{ $$ = reduction("Dec",@1.first_line, 1, $1); strcpy($$->node_value,$1->node_value);}
+	|	VarDec ASSIGNOP Exp		{ $$ = reduction("Dec",@1.first_line, 3, $1, $2, $3); strcpy($$->node_value,$1->node_value);}
 	;
 Exp
 	:	Exp ASSIGNOP Exp		{ $$ = reduction("Exp",@1.first_line, 3, $1, $2, $3); exp_cal($$, $1, $2, $3);}
@@ -186,7 +186,7 @@ node *reduction(char *name,int line,int num,...){
 	}
 } 
 
-void exp_cal(node* exp,node* left,node* op,node* rigth){
+void exp_cal(node* exp,node* left,node* op,node* rigth){//the anlysis of node exp
 	if(left->type != rigth->type){
 			printf("Error type 16 at line %d:Type mismatched",exp->line);
 	}
@@ -256,6 +256,8 @@ void show_tree(node *p, int depth) {
 		printf(": %d",p->node_int);
 	else if(strcmp(name,"FLOAT")==0)
 		printf(": %f",p->node_float);
+	else if(strcmp(name,"VarDec")==0)
+		printf(": %s",p->node_value);
 	else if(strcmp(name,"StructSpecifier")==0){
 		printf(": %s",p->node_value);
 	}

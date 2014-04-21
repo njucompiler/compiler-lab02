@@ -1,8 +1,22 @@
 typedef struct Type_* Type;
 typedef struct FieldList_* FieldList;
+
+
+typedef struct FuncVar{
+
+	 struct FuncVar* next;
+	 char kind[20];
+}FuncVars;
+
+typedef struct FUNC{
+	int declare;	//0声明，1实现
+	char RETURN[20];	//返回值类型
+	struct FuncVar *brother;
+}TFUNC;
+
 struct Type_
 {
-	enum { INT, FLOAT, ARRAY, STRUCTURE, FUNC } kind;
+	enum { Int, Float, ARRAY, STRUCTURE, FUNC } kind;
 	union
 		{// 基本类型
 		int INT;
@@ -12,9 +26,10 @@ struct Type_
 		// 结构体类型信息是一个链表
 		FieldList structure;
 		//函数
-		FUNC func;
+		struct FUNC func;
 	} u;
 	//Type *next;
+	char name[20];
 };
 struct FieldList_
 {
@@ -22,13 +37,4 @@ struct FieldList_
 	Type type;	// 域的类型
 	FieldList *child;	// 下一个域
 	FieldList *brother;	
-	};
-	struct FUNC{
-	int declare;	//0声明，1实现
-	char RETURN[20];	//返回值类型
-	FuncVar *brother;
-};
-struct FuncVar{
-	char kind[20];
-	RETURN *next;
 };
