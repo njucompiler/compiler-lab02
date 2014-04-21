@@ -9,7 +9,7 @@ struct FieldList_* SymbolTable[SIZE];
 =======
 /*typedef struct  
 {  
-    FieldList_ * value[SIZE];  
+    ieldList_ * value[SIZE];  
 }SymbolTable;  
 SymbolTable* create_SymbolTable()  
 {  
