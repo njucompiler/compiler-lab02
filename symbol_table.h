@@ -37,13 +37,14 @@ void create(){
 	head = temp;
 }
 void Delete(Stackhead *p){
-	while(p->child){
-		FieldList temp = p->child;
-		int i = hash_pjw(p->child->name);
+	FieldList s = p->child;
+	while(s){
+		FieldList temp = s;
+		int i = hash_pjw(s->name);
 		FieldList q = SymbolTable[i];
 		FieldList q1 = NULL;
 		while(q!=NULL){
-			if(strcmp(q->name,p->child->name) == 0){
+			if(strcmp(q->name,s->name) == 0){
 				break;
 			}
 			q1 = q;
@@ -61,7 +62,7 @@ void Delete(Stackhead *p){
 			}
 			else q1->child = NULL;
 		}
-		p = p->child;
+		s = s->child;
 	}
 }
 
@@ -121,9 +122,8 @@ void INT_Insert(char *name,int value){
 			head->brother = NULL;
 		}
 		else{
-			Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
-			temp->child = SymbolTable[i]->child;
-			head->child = temp;
+			SymbolTable[i]->scope = head->child;;
+			head->child = SymbolTable[i];
 		}
 	}
 	else{
@@ -139,9 +139,8 @@ void INT_Insert(char *name,int value){
 			head->brother = NULL;
 		}
 		else{
-			Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
-			temp->child = p->child;
-			head->child = temp;
+			SymbolTable[i]->scope = head->child;
+			head->child = SymbolTable[i];
 		}
 	}
 }
@@ -158,9 +157,8 @@ void FLOAT_Insert(char *name,float value){
 			head->brother = NULL;
 		}
 		else{
-			Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
-			temp->child = SymbolTable[i]->child;
-			head->child = temp;
+			SymbolTable[i]->scope = head->child;
+			head->child = SymbolTable[i];
 		}
 	}
 	else{
@@ -176,9 +174,8 @@ void FLOAT_Insert(char *name,float value){
 			head->brother = NULL;
 		}
 		else{
-			Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
-			temp->child = p->child;
-			head->child = temp;
+			SymbolTable[i]->scope = head->child;
+			head->child = SymbolTable[i];
 		}
 	}
 }
@@ -254,9 +251,8 @@ void FUNC_Insert(node *ExtDef){
 				head->brother = NULL;
 			}
 			else{
-				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
-				temp->child = SymbolTable[i]->child;
-				head->child = temp;
+				SymbolTable[i]->scope = head->child;
+				head->child = SymbolTable[i];
 			}
 		}
 		else{
@@ -324,9 +320,8 @@ void FUNC_Insert(node *ExtDef){
 				head->brother = NULL;
 			}
 			else{
-				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
-				temp->child = p->child;
-				head->child = temp;
+				SymbolTable[i]->scope = head->child;
+				head->child = SymbolTable[i];
 			}
 		}
 	}
@@ -350,9 +345,8 @@ void FUNC_Insert(node *ExtDef){
 				head->brother = NULL;
 			}
 			else{
-				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
-				temp->child = SymbolTable[i]->child;
-				head->child = temp;
+				SymbolTable[i]->scope = head->child;
+				head->child = SymbolTable[i];
 			}
 		}
 		else{
@@ -375,9 +369,8 @@ void FUNC_Insert(node *ExtDef){
 				head->brother = NULL;
 			}
 			else{
-				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
-				temp->child = p->child;
-				head->child = temp;
+				SymbolTable[i]->scope = head->child;
+				head->child = SymbolTable[i];
 			}
 		}
 	}
@@ -412,9 +405,8 @@ void STRUCT_Insert(node *p){
 				head->brother = NULL;
 			}
 			else{
-				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
-				temp->child = SymbolTable[i]->child;
-				head->child = temp;
+				SymbolTable[i]->scope = head->child;
+				head->child = SymbolTable[i];
 			}
 		}
 		else{
@@ -444,9 +436,8 @@ void STRUCT_Insert(node *p){
 				head->brother = NULL;
 			}
 			else{
-				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
-				temp->child = p->child;
-				head->child = temp;
+				SymbolTable[i]->scope = head->child;
+				head->child = SymbolTable[i];
 			}	
 		}
 	}
@@ -486,9 +477,8 @@ void ARRAY_Insert(node *VarDec,char *name){
 			head->brother = NULL;
 		}
 		else{
-			Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
-			temp->child = SymbolTable[i]->child;
-			head->child = temp;
+			SymbolTable[i]->scope = head->child;
+			head->child = SymbolTable[i];
 		}
 	}
 	else{
@@ -517,9 +507,8 @@ void ARRAY_Insert(node *VarDec,char *name){
 			head->brother = NULL;
 		}
 		else{
-			Stackhead *tem = (Stackhead *)malloc(sizeof(Stackhead));
-			tem->child = temp->child;
-			head->child = tem;
+			SymbolTable[i]->scope = head->child;
+			head->child = SymbolTable[i];
 		}
 	}
 }
