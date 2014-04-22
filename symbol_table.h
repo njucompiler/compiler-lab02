@@ -14,10 +14,12 @@ SymbolTable* create_SymbolTable()
 }  */
 
 void STRUCT_Insert(node *p);
+unsigned int hash_pjw(char* name);
 
 FieldList  SymbolTable[SIZE];
+
 typedef struct stack{
-	stack *brother;
+	struct stack *brother;
 	FieldList child;
 }Stackhead;
 Stackhead *head = NULL;
@@ -31,7 +33,7 @@ FieldList FieldList_init(){
 void create(){
 	Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
 	if(head == NULL) return;
-	temp->child = head;
+	temp->brother = head;
 	head = temp;
 }
 void Delete(Stackhead *p){
@@ -41,7 +43,7 @@ void Delete(Stackhead *p){
 		FieldList q = SymbolTable[i];
 		FieldList q1 = NULL;
 		while(q!=NULL){
-			if(strcmp(q->name,name) == 0){
+			if(strcmp(q->name,p->child->name) == 0){
 				break;
 			}
 			q1 = q;
@@ -49,7 +51,7 @@ void Delete(Stackhead *p){
 		}
 		if(!q1){
 			if(SymbolTable[i]->child){
-				SymbolTable[i] = SymbolTable[i]->child
+				SymbolTable[i] = SymbolTable[i]->child;
 			}
 			else SymbolTable[i] = NULL;
 		}
@@ -59,6 +61,7 @@ void Delete(Stackhead *p){
 			}
 			else q1->child = NULL;
 		}
+		p = p->child;
 	}
 }
 
