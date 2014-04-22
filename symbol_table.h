@@ -56,6 +56,15 @@ int get_kind(char *name){
 	return -1;
 }
 
+char* get_return(char *name){
+	int i = hash_pjw(name);
+	while(SymbolTable[i] != NULL){
+		if(strcmp(SymbolTable[i]->name,name) == 0) 
+			return SymbolTable[i]->type->func.RETURN;
+	}
+	return -1;
+}
+
 void INT_Insert(char *name,int value){
 	int i = hash_pjw(name);
 	if(SymbolTable[i] == NULL){
@@ -148,7 +157,7 @@ void FUNC_Insert(node *ExtDef){
 				Spec = VarList->child->child;
 				if(strcmp(Spec->child->node_value,"int")==0)
 					strcpy(temp->kind,"INT");
-				if(strcmp(Spec->child->node_value,"float")==0)
+				else if(strcmp(Spec->child->node_value,"float")==0)
 					strcpy(temp->kind,"FLOAT");
 				else			
 					strcpy(temp->kind,Spec->child->child->brother->child->name);
@@ -170,7 +179,7 @@ void FUNC_Insert(node *ExtDef){
 			//FieldList *temp = SymbolTable[i];
 			if(strcmp(Specifier->child->node_value,"int")==0)
 				strcpy(p->type->func.RETURN,"INT");
-			if(strcmp(Specifier->child->node_value,"float")==0)
+			else if(strcmp(Specifier->child->node_value,"float")==0)
 				strcpy(p->type->func.RETURN,"FLOAT");
 			else		//StructSpecifier STRUCT OptTag ID
 				strcpy(p->type->func.RETURN,Specifier->child->child->brother->child->name);
@@ -185,7 +194,7 @@ void FUNC_Insert(node *ExtDef){
 			node *Spec = VarList->child->child;
 			if(strcmp(Spec->child->node_value,"int")==0)
 				strcpy(temp->kind,"INT");
-			if(strcmp(Spec->child->node_value,"float")==0)
+			else if(strcmp(Spec->child->node_value,"float")==0)
 				strcpy(temp->kind,"FLOAT");
 			else			
 				strcpy(temp->kind,Spec->child->child->brother->child->name);
@@ -202,7 +211,7 @@ void FUNC_Insert(node *ExtDef){
 				Spec = VarList->child->child;
 				if(strcmp(Spec->child->node_value,"int")==0)
 					strcpy(temp->kind,"INT");
-				if(strcmp(Spec->child->node_value,"float")==0)
+				else if(strcmp(Spec->child->node_value,"float")==0)
 					strcpy(temp->kind,"FLOAT");
 				else			
 					strcpy(temp->kind,Spec->child->child->brother->child->name);		

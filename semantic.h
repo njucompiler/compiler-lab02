@@ -67,6 +67,17 @@ void exp_cal(node* exp){//exp is the node exp
 		else if(get_kind(exp->child->node_value) != 4){
 			printf("Error type 2 at line %d: Function %s is not defined\n",exp->line,exp->child->node_value);
 		}
+		else if{
+			//varlist not match
+
+		}
+		else{
+			char* RUTURN = get_return(exp->child->node_value);
+			if(strcmp(RUTURN,"INT")==0)
+				exp->type = 1;
+			else if(strcmp(RUTURN,"FLOAT")==0)
+				exp->type = 2;
+		}
 	}
 	else if(exp->type == 19){//ID LP RP
 
