@@ -62,7 +62,7 @@ void Delete(Stackhead *p){
 			}
 			else q1->child = NULL;
 		}
-		s = s->child;
+		s = s->socpe;
 	}
 }
 
