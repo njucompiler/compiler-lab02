@@ -13,6 +13,8 @@ SymbolTable* create_SymbolTable()
     return pHashTbl;  
 }  */
 
+void STRUCT_Insert(node *p);
+
 FieldList  SymbolTable[SIZE];
 
 FieldList FieldList_init(){
@@ -62,7 +64,7 @@ char* get_return(char *name){
 		if(strcmp(SymbolTable[i]->name,name) == 0) 
 			return SymbolTable[i]->type->func.RETURN;
 	}
-	return -1;
+	return "-1";
 }
 
 void INT_Insert(char *name,int value){
@@ -160,7 +162,7 @@ void FUNC_Insert(node *ExtDef){
 				temp->next = tem;
 				temp = temp->next;
 				Spec = VarList->child->child;
-				if(strcmp(Spec->child->node_value,"int")==0){
+				if(strcmp(Spec->child->node_value,"int")==0)
 					strcpy(temp->kind,"INT");
 				else if(strcmp(Spec->child->node_value,"float")==0){
 					strcpy(temp->kind,"FLOAT");

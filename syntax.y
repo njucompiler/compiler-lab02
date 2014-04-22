@@ -45,7 +45,7 @@ void free_tree(node *p);
 
 %%
 Program		
-	:	ExtDefList			{$$ = reduction("Program", @1.first_line,1, $1);printf("\n");if(!is_error){show_tree($$, 0);sem_analysis($$);} free_tree($$); }
+	:	ExtDefList			{$$ = reduction("Program", @1.first_line,1, $1);printf("\n");if(!is_error){sem_analysis($$);show_tree($$, 0);} free_tree($$); }
 	;
 ExtDefList
 	:	ExtDef ExtDefList		{ $$ = reduction("ExtDefList", @1.first_line,2,$1, $2); }
@@ -268,7 +268,7 @@ void show_tree(node *p, int depth) {
 	else if(strcmp(name,"ID")==0||strcmp(name,"TYPE")==0)
 		printf(": %s",p->node_value);
 	else if(strcmp(name,"Exp")==0){
-		if(p->type == 1)
+		if(p->type == 1 || p->type == 5)
 			printf(" type1:%d",p->node_int);
 		else
 			printf(" type2:%f",p->node_float);
