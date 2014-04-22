@@ -37,4 +37,5 @@ struct FieldList_
 	Type type;	// 域的类型
 	FieldList child;	// 下一个域
 	FieldList brother;	
+	FieldList scope;	//链接同一层作用域的指针
 };
