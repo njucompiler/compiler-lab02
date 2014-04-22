@@ -16,12 +16,50 @@ SymbolTable* create_SymbolTable()
 void STRUCT_Insert(node *p);
 
 FieldList  SymbolTable[SIZE];
+typedef struct stack{
+	stack *brother;
+	FieldList child;
+}Stackhead;
+Stackhead *head = NULL;
 
 FieldList FieldList_init(){
 	FieldList temp =  (FieldList)malloc(sizeof(struct FieldList_));
 	memset(temp,0,sizeof(struct FieldList_));
 	temp->type = (Type)malloc(sizeof(struct Type_));
 	return temp;
+}
+void create(){
+	Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+	if(head == NULL) return;
+	temp->child = head;
+	head = temp;
+}
+void Delete(Stackhead *p){
+	while(p->child){
+		FieldList temp = p->child;
+		int i = hash_pjw(p->child->name);
+		FieldList q = SymbolTable[i];
+		FieldList q1 = NULL;
+		while(q!=NULL){
+			if(strcmp(q->name,name) == 0){
+				break;
+			}
+			q1 = q;
+			q = q->child;
+		}
+		if(!q1){
+			if(SymbolTable[i]->child){
+				SymbolTable[i] = SymbolTable[i]->child
+			}
+			else SymbolTable[i] = NULL;
+		}
+		else{
+			if(q->child){
+				q1->child = q->child;
+			}
+			else q1->child = NULL;
+		}
+	}
 }
 
 unsigned int hash_pjw(char* name)
@@ -75,17 +113,33 @@ void INT_Insert(char *name,int value){
 		SymbolTable[i]->type->kind = Int;
 		SymbolTable[i]->type->INT = value;
 		SymbolTable[i]->child = NULL;
+		if(head->child == NULL){
+			head->child = SymbolTable[i];
+			head->brother = NULL;
+		}
+		else{
+			Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+			temp->child = SymbolTable[i]->child;
+			head->child = temp;
+		}
 	}
 	else{
-		FieldList p = SymbolTable[i];
-		//p = p->child;
-		while(p->child!=NULL) p=p->child;
-		p->child = FieldList_init();
-		p = p->child;
+		FieldList p = FieldList_init();
+		p->child = SymbolTable[i]->child;
+		SymbolTable[i] = p;
 		strcpy(p->name,name);
 		p->type->kind = Int;
 		p->type->INT = value;
 		p->child = NULL;
+		if(head->child == NULL){
+			head->child = p;
+			head->brother = NULL;
+		}
+		else{
+			Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+			temp->child = p->child;
+			head->child = temp;
+		}
 	}
 }
 void FLOAT_Insert(char *name,float value){
@@ -96,17 +150,33 @@ void FLOAT_Insert(char *name,float value){
 		SymbolTable[i]->type->kind = Float;
 		SymbolTable[i]->type->FLOAT = value;
 		SymbolTable[i]->child = NULL;
+		if(head->child == NULL){
+			head->child = SymbolTable[i];
+			head->brother = NULL;
+		}
+		else{
+			Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+			temp->child = SymbolTable[i]->child;
+			head->child = temp;
+		}
 	}
 	else{
-		FieldList p = SymbolTable[i];
-		//p = p->child;
-		while(p->child!=NULL) p=p->child;
-		p->child = FieldList_init();
-		p=p->child;
+		FieldList p = FieldList_init();
+		p->child = SymbolTable[i]->child;
+		SymbolTable[i] = p;
 		strcpy(p->name,name);
 		p->type->kind = Float;
 		p->type->FLOAT = value;
 		p->child = NULL;
+		if(head->child == NULL){
+			head->child = p;
+			head->brother = NULL;
+		}
+		else{
+			Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+			temp->child = p->child;
+			head->child = temp;
+		}
 	}
 }
 void FUNC_Insert(node *ExtDef){
@@ -176,13 +246,20 @@ void FUNC_Insert(node *ExtDef){
 				//temp->child = NULL;
 				//temp->brother = NULL:				
 			}
+			if(head->child == NULL){
+				head->child = SymbolTable[i];
+				head->brother = NULL;
+			}
+			else{
+				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+				temp->child = SymbolTable[i]->child;
+				head->child = temp;
+			}
 		}
 		else{
-			FieldList p = SymbolTable[i];
-			//p = p->child;
-			while(p->child!=NULL) p=p->child;
-			p->child = FieldList_init();
-			p = p->child;
+			FieldList p = FieldList_init();
+			p->child = SymbolTable[i]->child;
+			SymbolTable[i] = p;
 			strcpy(p->name,FunDec->child->node_value);
 			p->type->kind = FUNC;
 			//node *DefList = q1->child->brother->brother->brother;		//STRUCT(child) OptTag(b) LC(b) DefList(b) RC(b)
@@ -239,6 +316,15 @@ void FUNC_Insert(node *ExtDef){
 					STRUCT_Insert(Spec->child);
 				}		
 			}
+			if(head->child == NULL){
+				head->child = p;
+				head->brother = NULL;
+			}
+			else{
+				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+				temp->child = p->child;
+				head->child = temp;
+			}
 		}
 	}
 	else{
@@ -256,13 +342,20 @@ void FUNC_Insert(node *ExtDef){
 				strcpy(SymbolTable[i]->type->func.RETURN,Specifier->child->child->brother->child->name);
 			SymbolTable[i]->child = NULL;
 			SymbolTable[i]->brother = NULL;
+			if(head->child == NULL){
+				head->child = SymbolTable[i];
+				head->brother = NULL;
+			}
+			else{
+				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+				temp->child = SymbolTable[i]->child;
+				head->child = temp;
+			}
 		}
 		else{
-			FieldList p = SymbolTable[i];
-			//p = p->child;
-			while(p->child!=NULL) p=p->child;
-			p->child = FieldList_init();
-			p = p->child;
+			FieldList p = FieldList_init();
+			p->child = SymbolTable[i]->child;
+			SymbolTable[i] = p;
 			strcpy(p->name,Specifier->child->node_value);
 			p->type->kind = FUNC;
 			p->type->func.brother = NULL;
@@ -274,6 +367,15 @@ void FUNC_Insert(node *ExtDef){
 				strcpy(p->type->func.RETURN,Specifier->child->child->brother->child->name);
 			p->child = NULL;
 			p->brother = NULL;
+			if(head->child == NULL){
+				head->child = p;
+				head->brother = NULL;
+			}
+			else{
+				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+				temp->child = p->child;
+				head->child = temp;
+			}
 		}
 	}
 	return;
@@ -302,13 +404,20 @@ void STRUCT_Insert(node *p){
 				temp->child = NULL;
 				temp->brother = NULL;				
 			}
+			if(head->child == NULL){
+				head->child = SymbolTable[i];
+				head->brother = NULL;
+			}
+			else{
+				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+				temp->child = SymbolTable[i]->child;
+				head->child = temp;
+			}
 		}
 		else{
-			FieldList p = SymbolTable[i];
-			//p = p->child;
-			while(p->child!=NULL) p=p->child;
-			p->child = FieldList_init();
-			p = p->child;
+			FieldList p = FieldList_init();
+			p->child = SymbolTable[i]->child;
+			SymbolTable[i] = p;
 			strcpy(p->name,q1->child->name);
 			SymbolTable[i]->type->kind = STRUCTURE;
 			node *DefList = q1->child->brother->brother->brother;		//STRUCT(child) OptTag(b) LC(b) DefList(b) RC(b)
@@ -327,6 +436,15 @@ void STRUCT_Insert(node *p){
 				temp->brother = NULL;
 				node *DefList = DefList->child->brother;				
 			}
+			if(head->child == NULL){
+				head->child = p;
+				head->brother = NULL;
+			}
+			else{
+				Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+				temp->child = p->child;
+				head->child = temp;
+			}	
 		}
 	}
 	return;
@@ -360,13 +478,20 @@ void ARRAY_Insert(node *VarDec,char *name){
 			q->array.elem->kind = STRUCTURE;
 			strcpy(q->array.elem->name,name);
 		}
+		if(head->child == NULL){
+			head->child = SymbolTable[i];
+			head->brother = NULL;
+		}
+		else{
+			Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
+			temp->child = SymbolTable[i]->child;
+			head->child = temp;
+		}
 	}
 	else{
-		FieldList temp = SymbolTable[i];
-		temp = temp->child;
-		while(temp->child!=NULL) temp=temp->child;
-		temp->child = FieldList_init();
-		temp = temp->child;
+		FieldList temp = FieldList_init();
+		temp->child = SymbolTable[i]->child;
+		SymbolTable[i] = temp;
 		strcpy(temp->name,p->child->name);
 		Type q = temp->type;
 		int m = j-1;
@@ -383,6 +508,15 @@ void ARRAY_Insert(node *VarDec,char *name){
 		else {
 			q->array.elem->kind = STRUCTURE;
 			strcpy(q->array.elem->name,name);
+		}
+		if(head->child == NULL){
+			head->child = temp;
+			head->brother = NULL;
+		}
+		else{
+			Stackhead *tem = (Stackhead *)malloc(sizeof(Stackhead));
+			tem->child = temp->child;
+			head->child = tem;
 		}
 	}
 }
