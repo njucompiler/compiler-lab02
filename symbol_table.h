@@ -46,6 +46,16 @@ int Find(char *name){
 	}
 	return 0;
 }
+
+int get_kind(char *name){
+	int i = hash_pjw(name);
+	while(SymbolTable[i] != NULL){
+		if(strcmp(SymbolTable[i]->name,name) == 0) 
+			return SymbolTable[i]->type->kind;
+	}
+	return -1;
+}
+
 void INT_Insert(char *name,int value){
 	int i = hash_pjw(name);
 	if(SymbolTable[i] == NULL){

@@ -61,7 +61,12 @@ void exp_cal(node* exp){//exp is the node exp
 
 	}
 	else if(exp->type == 18){//ID LP Args RP
-
+		if(Find(exp->child->node_value)==0){
+			printf("Error type 2 at line %d: Function %s is not defined \n",exp->line,exp->child->node_value);
+		}
+		else if(get_kind(exp->child->node_value) != 4){
+			printf("Error type 2 at line %d: Function %s is not defined\n",exp->line,exp->child->node_value);
+		}
 	}
 	else if(exp->type == 19){//ID LP RP
 
@@ -73,13 +78,26 @@ void exp_cal(node* exp){//exp is the node exp
 
 	}
 	else if(exp->type == 22){//ID
-
+		if(Find(exp->child->node_value)==0){//var is not in the table
+			printf("Error type 1 at line %d: Variable is not defined \n",exp->line);
+		}
+		else{
+			int kind = get_kind(exp->child->node_value);
+			if(kind == 0){//int
+				exp->type = 5;
+				strcpy(exp->node_value,exp->child->node_value);
+			}
+			else if(kind == 1){
+				exp->type = 6;
+				strcpy(exp->node_value ,exp->child->node_value);
+			}
+		}
 	}
 	else if(exp->type == 23){//INT
 		exp->type = 1;
 		exp->node_int = exp->child->node_int;
 	}
-	else(exp->type == 24){//FLOAT
+	else if(exp->type == 24){//FLOAT
 		exp->type = 2;
 		exp->node_float = exp->child->node_float;
 	}
@@ -145,6 +163,9 @@ void sem_analysis(node *p) {
 	else if(strcmp(name,"ExtDef")==0){
 		if(strcmp(p->child->brother->name,"FunDec")==0)
 			FunDec_def(p);
+	}
+	else if(strcmp(name,"Exp")==0){
+		exp_cal(p);
 	}
 	if(p->child != NULL)
 		sem_analysis(p->child);
