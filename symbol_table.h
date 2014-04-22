@@ -22,9 +22,14 @@ typedef struct stack{
 	struct stack *brother;
 	FieldList child;
 }Stackhead;
-Stackhead *head = (Stackhead *)malloc(sizeof(Stackhead));
-head->child = NULL;
-head->brother = NULL;
+
+Stackhead *head;
+void Stackhead_init(){
+	head = (Stackhead *)malloc(sizeof(Stackhead));
+	head->child = NULL;
+	head->brother = NULL;
+}
+
 
 FieldList FieldList_init(){
 	FieldList temp =  (FieldList)malloc(sizeof(struct FieldList_));
