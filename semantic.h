@@ -391,15 +391,6 @@ void exp_cal(node* exp){//exp is the node exp
 
 }
 
-void minus(node* exp,node* left){
-	exp->type = left->type;
-	if(left->type == 1){
-		exp->node_int = left->node_int;
-	}
-	else
-		exp->node_float = left->node_float;
-}
-
 void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 	//if(strcmp(Vardec->node_value,"a")==0){
 	if(Find(Vardec->node_value)==1){//var is already in the table
@@ -407,12 +398,22 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 	}
 	else{//not defined
 		if(strcmp(Spcid,"int")==0){	
-			printf("INT_Insert\n");
-			INT_Insert(Vardec->node_value,0);		
+			//printf("INT_Insert\n");
+			INT_Insert(Vardec->node_value,0);
+			if(Vardec->brother != NULL){
+				if(Vardec->brother->brother->type != 1 || Vardec->brother->brother->type != 5){
+					printf("Error type 5 at line %d:Type mismatched\n",Vardec->line);
+				}
+			}		
 		}
 		else if(strcmp(Spcid,"float")==0){	
 			FLOAT_Insert(Vardec->node_value,0);
-			printf("FLOAT_Insert\n");
+			//printf("FLOAT_Insert\n");
+			if(Vardec->brother != NULL){
+				if(Vardec->brother->brother->type != 2 || Vardec->brother->brother->type != 6){
+					printf("Error type 5 at line %d:Type mismatched\n",Vardec->line);
+				}
+			}
 		}
 	}
 }
@@ -457,6 +458,15 @@ void sem_analysis(node *p) {
 		if(p->brother != NULL)
 			sem_analysis(p->brother);
 		exp_cal(p);
+		return;
+	}
+	else if(strcmp(name,"CompSt")){
+		stack_push();
+		if(p->child != NULL)
+			sem_analysis(p->child);
+		stack_pop(head);
+		if(p->brother != NULL)
+			sem_analysis(p->brother);
 		return;
 	}
 	if(p->child != NULL)

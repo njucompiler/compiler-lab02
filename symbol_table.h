@@ -32,13 +32,13 @@ FieldList FieldList_init(){
 	temp->type = (Type)malloc(sizeof(struct Type_));
 	return temp;
 }
-void create(){
+void stack_push(){
 	Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
 	if(head == NULL) return;
 	temp->brother = head;
 	head = temp;
 }
-void Delete(Stackhead *p){
+void stack_pop(Stackhead *p){//delete
 	FieldList s = p->child;
 	while(s){
 		FieldList temp = s;
