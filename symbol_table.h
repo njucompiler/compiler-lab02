@@ -139,11 +139,16 @@ void FUNC_Insert(node *ExtDef){
 			node *Spec = VarList->child->child;
 			if(strcmp(Spec->child->node_value,"int")==0){
 				strcpy(temp->kind,"INT");
+				INT_Insert(Spec->brother->child->node_value,0);
 			}
-			else if(strcmp(Spec->child->node_value,"float")==0)
+			else if(strcmp(Spec->child->node_value,"float")==0){
 				strcpy(temp->kind,"FLOAT");
-			else			
+				FLOAT_Insert(Spec->brother->child->node_value,0);
+			}
+			else{			
 				strcpy(temp->kind,Spec->child->child->brother->child->name);		
+				STRUCT_Insert(Spec->child);
+			}
 			//VarList = VarList->child->brother->brother;
 			//temp = temp->brother;
 			while(VarList->child->brother!=NULL){
@@ -155,12 +160,16 @@ void FUNC_Insert(node *ExtDef){
 				temp->next = tem;
 				temp = temp->next;
 				Spec = VarList->child->child;
-				if(strcmp(Spec->child->node_value,"int")==0)
+				if(strcmp(Spec->child->node_value,"int")==0){
 					strcpy(temp->kind,"INT");
-				else if(strcmp(Spec->child->node_value,"float")==0)
+				else if(strcmp(Spec->child->node_value,"float")==0){
 					strcpy(temp->kind,"FLOAT");
-				else			
+					INT_Insert(Spec->brother->child->node_value,0);
+				}
+				else{			
 					strcpy(temp->kind,Spec->child->child->brother->child->name);
+					STRUCT_Insert(Spec->child);
+				}
 				//VarList = VarList->child->child->brother;
 				//temp->child = NULL;
 				//temp->brother = NULL:				
@@ -192,12 +201,18 @@ void FUNC_Insert(node *ExtDef){
 			temp->next =NULL;
 			p->type->func.brother = temp;
 			node *Spec = VarList->child->child;
-			if(strcmp(Spec->child->node_value,"int")==0)
+			if(strcmp(Spec->child->node_value,"int")==0){
 				strcpy(temp->kind,"INT");
-			else if(strcmp(Spec->child->node_value,"float")==0)
+				INT_Insert(Spec->brother->child->node_value,0);
+			}
+			else if(strcmp(Spec->child->node_value,"float")==0){
 				strcpy(temp->kind,"FLOAT");
-			else			
+				FLOAT_Insert(Spec->brother->child->node_value,0);
+			}
+			else{			
 				strcpy(temp->kind,Spec->child->child->brother->child->name);
+				STRUCT_Insert(Spec->child);
+			}
 			
 			//temp = temp->brother;
 			while(VarList->child->brother!=NULL){
@@ -209,12 +224,18 @@ void FUNC_Insert(node *ExtDef){
 				temp->next = tem;
 				temp = temp->next;
 				Spec = VarList->child->child;
-				if(strcmp(Spec->child->node_value,"int")==0)
+				if(strcmp(Spec->child->node_value,"int")==0){
 					strcpy(temp->kind,"INT");
-				else if(strcmp(Spec->child->node_value,"float")==0)
+					INT_Insert(Spec->brother->child->node_value,0);
+				}
+				else if(strcmp(Spec->child->node_value,"float")==0){
 					strcpy(temp->kind,"FLOAT");
-				else			
-					strcpy(temp->kind,Spec->child->child->brother->child->name);		
+					INT_Insert(Spec->brother->child->node_value,0);
+				}
+				else{			
+					strcpy(temp->kind,Spec->child->child->brother->child->name);
+					STRUCT_Insert(Spec->child);
+				}		
 			}
 		}
 	}
