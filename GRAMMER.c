@@ -80,7 +80,7 @@ Dec	//变量只有赋值，不可检测变量重复（在Def中）
 	|	VarDec ASSIGNOP Exp	//可用来检测类型错误	
 	;
 Exp	//用来检测类型错误，也有是否定义检测
-	:	Exp ASSIGNOP Exp		
+	:	Exp ASSIGNOP Exp	//	
 	|	Exp AND Exp			
 	|	Exp OR Exp		
 	|	Exp RELOP Exp			
