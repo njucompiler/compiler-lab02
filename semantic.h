@@ -460,6 +460,15 @@ void sem_analysis(node *p) {
 		exp_cal(p);
 		return;
 	}
+	else if(strcmp(name,"CompSt")){
+		stack_push();
+		if(p->child != NULL)
+			sem_analysis(p->child);
+		stack_pop(head);
+		if(p->brother != NULL)
+			sem_analysis(p->brother);
+		return;
+	}
 	if(p->child != NULL)
 		sem_analysis(p->child);
 	if(p->brother != NULL)
