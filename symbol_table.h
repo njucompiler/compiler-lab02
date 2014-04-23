@@ -335,7 +335,6 @@ void FUNC_Insert(node *ExtDef){
 	else{
 		int i = hash_pjw(FunDec->child->node_value);
 		if(SymbolTable[i] == NULL){ 
-			printf("aaa\n");
 			SymbolTable[i] = FieldList_init();		
 			strcpy(SymbolTable[i]->name,FunDec->child->node_value);
 			SymbolTable[i]->type->kind = FUNC;
@@ -348,7 +347,6 @@ void FUNC_Insert(node *ExtDef){
 				strcpy(SymbolTable[i]->type->func.RETURN,Specifier->child->child->brother->child->name);
 			SymbolTable[i]->child = NULL;
 			SymbolTable[i]->brother = NULL;
-			printf("bb\n");
 			if(head->child == NULL){
 				head->child = SymbolTable[i];
 				head->brother = NULL;
@@ -356,7 +354,7 @@ void FUNC_Insert(node *ExtDef){
 			else{
 				SymbolTable[i]->scope = head->child;
 				head->child = SymbolTable[i];
-			}printf("ccc\n");
+			}
 		}
 		else{
 			FieldList p = FieldList_init();
