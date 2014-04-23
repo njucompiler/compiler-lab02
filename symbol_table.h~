@@ -459,7 +459,7 @@ void ARRAY_Insert(node *VarDec,char *name,char *spec){
 		a[j] = p->child->brother->brother->node_int;
 		p = p->child;
 	}
-	int i = hash_pjw(name);
+	int i = hash_pjw(name);printf("%s\n",p->child->name);
 	if(SymbolTable[i] == NULL){
 		SymbolTable[i] = FieldList_init();
 		strcpy(SymbolTable[i]->name,name);
