@@ -29,6 +29,8 @@
 int exp_cmp(node* left,node*right){
 	int ltype = left->type;
 	int rtype = right->type;
+	if(ltype == 0 || rtype == 0)
+		return 1;
 	if(((ltype == 1 || ltype == 5) && (rtype == 1 || rtype == 5)) || ((ltype == 2 || ltype == 6)&&(rtype == 2 || rtype == 6)))
 		return 1;
 	else
@@ -351,7 +353,18 @@ void exp_cal(node* exp){//exp is the node exp
 
 	//--------------------------------------------------Exp LB Exp RB
 	else if(exp->type == 20){
-
+		if(exp->child->type != 3){//is not array
+			printf("Error type 10 at line %d: %s is not array \n",exp->line,exp->node_value);
+			exp->type = 0;
+		}
+		else if(exp->child->brother->brother->type != 1 && exp->child->brother->brother->type != 5 ){
+			printf("Error type 12 at line %d: Operands type mistaken\n",exp->line);
+			exp->type = 0;
+		}
+		else{//right
+			exp->type = 3;
+			strcpy(exp->node_value,exp->child->node_value);
+		}
 	}
 
 	//--------------------------------------------------Exp DOT ID
@@ -363,6 +376,7 @@ void exp_cal(node* exp){//exp is the node exp
 	else if(exp->type == 22){
 		if(Find(exp->child->node_value)==0){//var is not in the table
 			printf("Error type 1 at line %d: Variable is not defined \n",exp->line);
+			exp->type = 0;
 		}
 		else{
 			int kind = get_kind(exp->child->node_value);
@@ -370,9 +384,13 @@ void exp_cal(node* exp){//exp is the node exp
 				exp->type = 5;
 				strcpy(exp->node_value,exp->child->node_value);
 			}
-			else if(kind == 1){
+			else if(kind == 1){//float
 				exp->type = 6;
 				strcpy(exp->node_value ,exp->child->node_value);
+			}
+			else if(kind == 2){//array
+				exp->type = 3;
+				strcpy(exp->node_value,exp->child->node_value);
 			}
 		}
 	}
@@ -397,33 +415,46 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 		printf("Error type 3 at line %d: Variable is already defined \n",Vardec->line);
 	}
 	else{//not defined
+		printf("Vardec->node_value:%s Vardec->type :%d\n",Vardec->node_value,Vardec->type);
 		if(strcmp(Spcid,"int")==0){	
 			//printf("INT_Insert\n");
-			INT_Insert(Vardec->node_value,0);
 			if(Vardec->brother != NULL){
 				if(Vardec->brother->brother->type != 1 || Vardec->brother->brother->type != 5){
 					printf("Error type 5 at line %d:Type mismatched\n",Vardec->line);
 				}
-			}		
+			}
+			if(Vardec->type != 3){
+				INT_Insert(Vardec->node_value,0);		
+			}
+			else{//array
+				printf("ARRAY_Insert int\n");
+				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
+			}
 		}
 		else if(strcmp(Spcid,"float")==0){	
-			FLOAT_Insert(Vardec->node_value,0);
 			//printf("FLOAT_Insert\n");
 			if(Vardec->brother != NULL){
 				if(Vardec->brother->brother->type != 2 || Vardec->brother->brother->type != 6){
 					printf("Error type 5 at line %d:Type mismatched\n",Vardec->line);
 				}
 			}
+			if(Vardec->type != 3){
+				FLOAT_Insert(Vardec->node_value,0);
+			}
+			else{
+				printf("ARRAY_Insert float\n");
+				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
+			}
 		}
 	}
 }
 
 void DecList_anly(char* Spcid,node* Dec){//Dec is the first child of the DecList
-	Dec_anly(Spcid,Dec);
+	Dec_anly(Spcid,Dec->child);
 	node* p = Dec;
 	while(p->brother != NULL){
 		p = p->brother->brother->child;//next DecList's first child
-		Dec_anly(Spcid,p);
+		Dec_anly(Spcid,p->child);
 	}
 }
 
@@ -461,7 +492,7 @@ void sem_analysis(node *p) {
 		exp_cal(p);
 		return;
 	}
-	else if(strcmp(name,"CompSt")){
+	else if(strcmp(name,"CompSt")==0){
 		stack_push();
 		if(p->child != NULL)
 			sem_analysis(p->child);
@@ -469,6 +500,11 @@ void sem_analysis(node *p) {
 		if(p->brother != NULL)
 			sem_analysis(p->brother);
 		return;
+	}
+	else if(strcmp(name,"StructSpecifier")==0){
+		if(strcmp(p->child->brother->name,"OptTag") == 0){
+			STRUCT_Insert(p);
+		}
 	}
 	if(p->child != NULL)
 		sem_analysis(p->child);

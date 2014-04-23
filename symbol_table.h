@@ -335,7 +335,6 @@ void FUNC_Insert(node *ExtDef){
 	else{
 		int i = hash_pjw(FunDec->child->node_value);
 		if(SymbolTable[i] == NULL){ 
-			printf("aaa\n");
 			SymbolTable[i] = FieldList_init();		
 			strcpy(SymbolTable[i]->name,FunDec->child->node_value);
 			SymbolTable[i]->type->kind = FUNC;
@@ -348,7 +347,6 @@ void FUNC_Insert(node *ExtDef){
 				strcpy(SymbolTable[i]->type->func.RETURN,Specifier->child->child->brother->child->name);
 			SymbolTable[i]->child = NULL;
 			SymbolTable[i]->brother = NULL;
-			printf("bb\n");
 			if(head->child == NULL){
 				head->child = SymbolTable[i];
 				head->brother = NULL;
@@ -356,7 +354,7 @@ void FUNC_Insert(node *ExtDef){
 			else{
 				SymbolTable[i]->scope = head->child;
 				head->child = SymbolTable[i];
-			}printf("ccc\n");
+			}
 		}
 		else{
 			FieldList p = FieldList_init();
@@ -452,34 +450,39 @@ void STRUCT_Insert(node *p){
 	}
 	return;
 }
-void ARRAY_Insert(node *VarDec,char *name){
+void ARRAY_Insert(node *VarDec,char *name,char *spec){
 	int j = 0;
 	int a[20];
 	node *p = VarDec;
 	for(;strcmp(p->child->name,"VarDec")==0;j++){
-		p = p->child;
+		
 		a[j] = p->child->brother->brother->node_int;
+		p = p->child;
 	}
-	int i = hash_pjw(p->child->name);
-
+	int i = hash_pjw(name);
 	if(SymbolTable[i] == NULL){
 		SymbolTable[i] = FieldList_init();
-		strcpy(SymbolTable[i]->name,p->child->name);
+		strcpy(SymbolTable[i]->name,name);
 		Type q = SymbolTable[i]->type;
 		int m = j-1;
 		for(;m>0;m--){
+			q->array.elem = (Type)malloc(sizeof(struct Type_));
 			q->array.size = a[m];
 			q->array.elem->kind = ARRAY;
 			q = q->array.elem;
 		}
 		q->array.size = a[m];
-		if(strcmp(name,"INT")==0)
+		q->array.elem = (Type)malloc(sizeof(struct Type_));
+		printf("ab\n");
+		if(strcmp(spec,"int")==0){
 			q->array.elem->kind = Int;
-		else if(strcmp(name,"FLOAT")==0)
+			printf("%s\n",spec);
+		}
+		else if(strcmp(spec,"float")==0)
 			q->array.elem->kind = Float;
 		else {
 			q->array.elem->kind = STRUCTURE;
-			strcpy(q->array.elem->name,name);
+			strcpy(q->array.elem->name,spec);
 		}
 		if(head->child == NULL){
 			head->child = SymbolTable[i];
@@ -494,18 +497,20 @@ void ARRAY_Insert(node *VarDec,char *name){
 		FieldList temp = FieldList_init();
 		temp->child = SymbolTable[i]->child;
 		SymbolTable[i] = temp;
-		strcpy(temp->name,p->child->name);
+		strcpy(temp->name,name);
 		Type q = temp->type;
 		int m = j-1;
 		for(;m>0;m--){
+			q->array.elem = (Type)malloc(sizeof(struct Type_));
 			q->array.size = a[m];
 			q->array.elem->kind = ARRAY;
 			q = q->array.elem;
 		}
 		q->array.size = a[m];
-		if(strcmp(name,"INT")==0)
+		q->array.elem = (Type)malloc(sizeof(struct Type_));
+		if(strcmp(name,"int")==0)
 			q->array.elem->kind = Int;
-		else if(strcmp(name,"FLOAT")==0)
+		else if(strcmp(name,"float")==0)
 			q->array.elem->kind = Float;
 		else {
 			q->array.elem->kind = STRUCTURE;

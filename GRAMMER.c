@@ -93,7 +93,7 @@ Exp	//用来检测类型错误，也有是否定义检测
 	|	NOT Exp				
 	|	ID LP Args RP	//函数调用，检测是否定义	
 	|	ID LP RP	//函数调用，检测是否定义		
-	|	Exp LB Exp RB			
+	|	Exp LB Exp RB		//array 	
 	|	Exp DOT ID	//结构是否由该成员	
 	|	ID		//是否定义		
 	|	INT				

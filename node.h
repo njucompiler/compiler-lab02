@@ -4,7 +4,7 @@
 int is_error = 0;
 
 typedef struct Tnode{
-	int type; /*1 int，2 float 3 array 4 struct 5 var-int 6 var-float */
+	int type; /*0 undefiend 1 int，2 float 3 array 4 struct 5 var-int 6 var-float 7-24 exp*/
 	struct Tnode *child;
 	struct Tnode *brother;
 	char name[50];

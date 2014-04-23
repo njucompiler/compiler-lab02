@@ -77,7 +77,7 @@ Tag
 	;
 VarDec	
 	:	ID				{ $$ = reduction("VarDec",@1.first_line, 1, $1); strcpy($$->node_value,$1->node_value);}
-	|	VarDec LB INT RB		{ $$ = reduction("VarDec",@1.first_line, 4, $1, $2, $3, $4); $$->type = 3;strcpy($$->node_value,$1->node_value);}
+	|	VarDec LB INT RB		{ $$ = reduction("VarDec",@1.first_line, 4, $1, $2, $3, $4); $$->type = 3;$1->type = 3;strcpy($$->node_value,$1->node_value);}
 	|	error RB
 	;
 FunDec
@@ -258,7 +258,7 @@ void show_tree(node *p, int depth) {
 	else if(strcmp(name,"FLOAT")==0)
 		printf(": %f",p->node_float);
 	else if(strcmp(name,"VarDec")==0)
-		printf(": %s",p->node_value);
+		printf(": %s type:%d",p->node_value,p->type);
 	else if(strcmp(name,"StructSpecifier")==0){
 		printf(": %s",p->node_value);
 	}
@@ -268,10 +268,11 @@ void show_tree(node *p, int depth) {
 	else if(strcmp(name,"ID")==0||strcmp(name,"TYPE")==0)
 		printf(": %s",p->node_value);
 	else if(strcmp(name,"Exp")==0){
+		printf(": type: %d",p->type);
 		if(p->type == 1 || p->type == 5)
-			printf(" type1:%d",p->node_int);
-		else
-			printf(" type2:%f",p->node_float);
+			printf("%d",p->node_int);
+		else if(p->type == 2 || p->type == 6)
+			printf(" %f",p->node_float);
 	}
 	else 
 		printf(" (%d)",p->line);
