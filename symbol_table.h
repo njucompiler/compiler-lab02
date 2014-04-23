@@ -502,14 +502,14 @@ void STRUCT_Insert(node *p){
 			}
 		}
 		else{
-			FieldList p = FieldList_init();
-			p->child = SymbolTable[i]->child;
-			SymbolTable[i] = p;
-			strcpy(p->name,q1->child->node_value);
+			FieldList s = FieldList_init();
+			s->child = SymbolTable[i]->child;
+			SymbolTable[i] = s;
+			strcpy(s->name,q1->child->node_value);
 			SymbolTable[i]->type->kind = STRUCTURE;
 			node *DefList = p->child->brother->brother->brother;		//STRUCT(child) OptTag(b) LC(b) DefList(b) RC(b)
 			/*deflist (c)def (b)deflist*/
-			FieldList temp = p;
+			FieldList temp = s;
 			while(DefList!=NULL){
 				temp->brother = FieldList_init();
 				temp = temp->brother;				
@@ -524,7 +524,7 @@ void STRUCT_Insert(node *p){
 				node *DefList = DefList->child->brother;				
 			}
 			if(head->child == NULL){
-				head->child = p;
+				head->child = s;
 				head->brother = NULL;
 			}
 			else{
