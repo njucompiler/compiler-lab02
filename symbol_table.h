@@ -73,6 +73,7 @@ void stack_pop(Stackhead *p){//delete
 	}
 }
 
+
 unsigned int hash_pjw(char* name)
 {
 	unsigned int val = 0, i;
@@ -96,6 +97,25 @@ int Find(char *name){
 		p = p->child;
 	}
 	return 0;
+}
+
+char *get_Array(char *name){
+	int i = hash_pjw(name);
+	FieldList p = SymbolTable[i];
+	while(p!=NULL){
+		if(strcmp(p->name,name) == 0)
+			break;
+		p = p->child;
+	}
+	Type temp;
+	temp = p->type;
+	while(!temp->array.elem)
+		temp = temp->array.elem;
+	if(temp->kind == Int)
+		return "int";
+	else if(temp->kind == Float)
+		return "float";
+	else return temp->name;
 }
 
 int get_kind(char *name){
