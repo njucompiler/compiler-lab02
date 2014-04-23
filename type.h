@@ -16,7 +16,7 @@ typedef struct FUNC{
 
 struct Type_
 {
-	enum { Int, Float, ARRAY, STRUCTURE, FUNC } kind;
+	enum { Int, Float, ARRAY, STRUCTURE, FUNC ,STRUCTVAR} kind;
 	union
 		{// 基本类型
 		int INT;
