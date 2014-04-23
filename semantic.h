@@ -396,7 +396,9 @@ void exp_cal(node* exp){//exp is the node exp
 	//--------------------------------------------------Exp DOT ID
 	else if(exp->type == 21){	
 		exp->type = 0;
-		exp->node_value = exp->child->node_value;
+		strcpy(exp->node_value,exp->child->node_value);
+		printf("kind: %d\n",get_kind(exp->child->node_value));
+		printf("FindStruct:%d\n",FindStruct(exp->child->node_value,exp->child->brother->brother->node_value));
 		if(Find(exp->child->node_value) == 0){
 			printf("Error type 1 at line %d: Variable is not defined \n",exp->line);
 			printf("Error type 13 at line %d: Illegal use of “.”",exp->line);
@@ -431,6 +433,10 @@ void exp_cal(node* exp){//exp is the node exp
 			}
 			else if(kind == 2){//array
 				exp->type = 3;
+				strcpy(exp->node_value,exp->child->node_value);
+			}
+			else if(kind == 5){//struct var
+				exp->type = 4;
 				strcpy(exp->node_value,exp->child->node_value);
 			}
 			else
@@ -487,17 +493,19 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
 			}
 		}
-		/*else{//var of struct 
+		else{//var of struct 
 			if(Vardec->brother != NULL){
-					printf("Error type 5 at line %d:  Type mismatched\n",Vardec->line);
+				printf("Error type 5 at line %d:  Type mismatched\n",Vardec->line);
 			}
 			if(Vardec->type != 3){
+				printf("varStruct_Insert\n");
 				varStruct_Insert(Vardec->node_value,Spcid);
+				printf("varStruct_Insert finised\n");
 			}
 			else{
 				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
 			}
-		}*/
+		}
 	}
 }
 
@@ -512,10 +520,6 @@ void DecList_anly(char* Spcid,node* Dec){//Dec is the first child of the DecList
 
 void Def_anly(node *p){//p is the first child of the Def
 	node* DecList = p->brother;
-	if(p->type == 4){
-		printf("STRUCT_Insert\n");
-		STRUCT_Insert(p->child);
-	}
 	DecList_anly(p->node_value,DecList->child);
 }
 
@@ -530,12 +534,10 @@ void FunDec_def(node *p){
 }
 
 void ExtDef_anly(node* p){//p is the node of Extdef
-	printf("p->child->child :%s\n",p->child->child->name);
 	if(strcmp(p->child->brother->name,"FunDec")==0){//func defiend
 		FunDec_def(p);
 	}
 	else if(strcmp(p->child->child->name,"StructSpecifier")==0){
-		printf("1\n");
 		STRUCT_Insert(p->child->child);
 	}
 	else{
@@ -543,7 +545,6 @@ void ExtDef_anly(node* p){//p is the node of Extdef
 			STRUCT_Insert(p->child->child);
 		}
 	}
-	printf("2\n");
 }
 
 void sem_analysis(node *p){		
