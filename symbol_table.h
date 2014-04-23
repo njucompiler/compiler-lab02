@@ -111,11 +111,18 @@ char *get_Array(char *name){
 	temp = p->type;
 	while(!temp->array.elem)
 		temp = temp->array.elem;
-	if(temp->kind == Int)
+	if(temp->kind == Int){
+		printf("int\n");
 		return "int";
-	else if(temp->kind == Float)
+	}
+	else if(temp->kind == Float){
+		printf("float\n");
 		return "float";
-	else return temp->name;
+	}
+	else{
+		printf("struct :%s\n",temp->name); 
+		return temp->name;
+	}
 }
 
 int get_kind(char *name){
@@ -494,7 +501,6 @@ void ARRAY_Insert(node *VarDec,char *name,char *spec){
 		q->array.size = a[m];
 		q->kind = ARRAY;
 		q->array.elem = (Type)malloc(sizeof(struct Type_));
-		printf("ab\n");
 		if(strcmp(spec,"int")==0){
 			q->array.elem->kind = Int;
 			printf("%s\n",spec);

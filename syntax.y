@@ -270,9 +270,9 @@ void show_tree(node *p, int depth) {
 	else if(strcmp(name,"Exp")==0){
 		printf(": type: %d",p->type);
 		if(p->type == 1 || p->type == 5)
-			printf("%d",p->node_int);
+			printf(" value %d",p->node_int);
 		else if(p->type == 2 || p->type == 6)
-			printf(" %f",p->node_float);
+			printf(" valua %f",p->node_float);
 	}
 	else 
 		printf(" (%d)",p->line);

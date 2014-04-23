@@ -27,8 +27,34 @@
 }*/
 
 int exp_cmp(node* left,node*right){
-	int ltype = left->type;
-	int rtype = right->type;
+	int ltype,rtype;
+	printf("array->type %s\n",get_Array(left->node_value));
+	if(left->type == 3 || right->type == 3){
+		if(left->type == 3){
+			if(strcmp(get_Array(left->node_value),"int") == 0){
+				ltype = 5;
+			}
+			else if (strcmp(get_Array(left->node_value),"float") == 0){
+				ltype = 6;
+			}
+			else//struct
+				ltype = 4;
+		}
+		if(right->type == 3){
+			if(strcmp(get_Array(right->node_value),"int") == 0){
+				rtype = 5;
+			}
+			else if (strcmp(get_Array(right->node_value),"float") == 0){
+				rtype = 6;
+			}
+			else//struct
+				rtype = 4;
+		}
+	}
+	else{
+		int ltype = left->type;
+		int rtype = right->type;
+	}
 	if(ltype == 0 || rtype == 0)
 		return 1;
 	if(((ltype == 1 || ltype == 5) && (rtype == 1 || rtype == 5)) || ((ltype == 2 || ltype == 6)&&(rtype == 2 || rtype == 6)))
