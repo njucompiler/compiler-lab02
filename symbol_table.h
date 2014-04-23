@@ -481,15 +481,20 @@ void STRUCT_Insert(node *p){
 			while(DefList!=NULL){
 				temp->brother = FieldList_init();
 				temp = temp->brother;				
-				node *TYPEorSTRUCT = DefList->child->child->child;
-				if(strcmp(TYPEorSTRUCT->name,"int"))
+				node *TYPEorSTRUCT = DefList->child->child->child;	
+				if(strcmp(TYPEorSTRUCT->node_value,"int"))
 					temp->type->kind = Int;
-				else if(strcmp(TYPEorSTRUCT->name,"float"))
+				else if(strcmp(TYPEorSTRUCT->node_value,"float"))
 					temp->type->kind = Float;
-				else temp->type->kind = STRUCT;
-				node *DefList = DefList->child->brother;
+				else {
+					temp->type->kind = STRUCTURE;
+					strcmp(temp->type->name,TYPEorSTRUCT->child->brother->node_value);
+				}
+				if(!DefList->child->brother)
+					DefList = DefList->child->brother;
+				else break;
 				temp->child = NULL;
-				temp->brother = NULL;				
+				temp->brother = NULL;		
 			}
 			if(head->child == NULL){
 				head->child = SymbolTable[i];
@@ -513,14 +518,19 @@ void STRUCT_Insert(node *p){
 				temp->brother = FieldList_init();
 				temp = temp->brother;				
 				node *TYPEorSTRUCT = DefList->child->child->child;
-				if(strcmp(TYPEorSTRUCT->name,"int"))
+				if(strcmp(TYPEorSTRUCT->node_value,"int"))
 					temp->type->kind = Int;
-				else if(strcmp(TYPEorSTRUCT->name,"float"))
+				else if(strcmp(TYPEorSTRUCT->node_value,"float"))
 					temp->type->kind = Float;
-				else temp->type->kind = STRUCT;
+				else {
+					temp->type->kind = STRUCTURE;
+					strcmp(temp->type->name,TYPEorSTRUCT->child->brother->node_value);
+				}
 				temp->child = NULL;
 				temp->brother = NULL;
-				node *DefList = DefList->child->brother;				
+				if(!DefList->child->brother)
+					DefList = DefList->child->brother;
+				else break;			
 			}
 			if(head->child == NULL){
 				head->child = s;
