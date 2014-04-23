@@ -353,7 +353,7 @@ void exp_cal(node* exp){//exp is the node exp
 
 	//--------------------------------------------------Exp LB Exp RB
 	else if(exp->type == 20){
-		if(exp->type != 3){//is not array
+		if(exp->child->type != 3){//is not array
 			printf("Error type 10 at line %d: %s is not array \n",exp->line,exp->node_value);
 			exp->type = 0;
 		}
