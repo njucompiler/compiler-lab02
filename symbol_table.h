@@ -408,6 +408,41 @@ void FUNC_Insert(node *ExtDef){
 	}
 	return;
 }
+void varStruct_Insert(char *name,char *spec){
+	int i = hash_pjw(name);
+	if(SymbolTable[i] == NULL){
+		SymbolTable[i] = FieldList_init();
+		strcpy(SymbolTable[i]->name,name);
+		SymbolTable[i]->type->kind = STRUCTVAR;
+		strcpy(SymbolTable[i]->type->name,spec);
+		SymbolTable[i]->child = NULL;
+		if(head->child == NULL){
+			head->child = SymbolTable[i];
+			head->brother = NULL;
+		}
+		else{
+			SymbolTable[i]->scope = head->child;;
+			head->child = SymbolTable[i];
+		}
+	}
+	else{
+		FieldList p = FieldList_init();
+		p->child = SymbolTable[i]->child;
+		SymbolTable[i] = p;
+		strcpy(p->name,name);
+		p->type->kind = STRUCTVAR;
+		strcpy(SymbolTable[i]->type->name,spec);
+		p->child = NULL;
+		if(head->child == NULL){
+			head->child = p;
+			head->brother = NULL;
+		}
+		else{
+			SymbolTable[i]->scope = head->child;
+			head->child = SymbolTable[i];
+		}
+	}	
+}
 void STRUCT_Insert(node *p){
 	if(strcmp(p->child->brother->name,"OptTag") == 0){
 		node *q1 = p->child->brother;
