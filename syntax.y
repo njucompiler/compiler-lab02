@@ -77,7 +77,7 @@ Tag
 	;
 VarDec	
 	:	ID				{ $$ = reduction("VarDec",@1.first_line, 1, $1); strcpy($$->node_value,$1->node_value);}
-	|	VarDec LB INT RB		{ $$ = reduction("VarDec",@1.first_line, 4, $1, $2, $3, $4); $$->type = 3;strcpy($$->node_value,$1->node_value);}
+	|	VarDec LB INT RB		{ $$ = reduction("VarDec",@1.first_line, 4, $1, $2, $3, $4); $$->type = 3;$1->type = 3;strcpy($$->node_value,$1->node_value);}
 	|	error RB
 	;
 FunDec
@@ -258,7 +258,7 @@ void show_tree(node *p, int depth) {
 	else if(strcmp(name,"FLOAT")==0)
 		printf(": %f",p->node_float);
 	else if(strcmp(name,"VarDec")==0)
-		printf(": %s",p->node_value);
+		printf(": %s type:%d",p->node_value,p->type);
 	else if(strcmp(name,"StructSpecifier")==0){
 		printf(": %s",p->node_value);
 	}

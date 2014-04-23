@@ -362,7 +362,7 @@ void exp_cal(node* exp){//exp is the node exp
 			exp->type = 0;
 		}
 		else{//right
-			exp->type = exp->child->type;
+			exp->type = 3;
 			strcpy(exp->node_value,exp->child->node_value);
 		}
 	}
@@ -415,6 +415,7 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 		printf("Error type 3 at line %d: Variable is already defined \n",Vardec->line);
 	}
 	else{//not defined
+		printf("Vardec->node_value:%s Vardec->type :%d\n",Vardec->node_value,Vardec->type);
 		if(strcmp(Spcid,"int")==0){	
 			//printf("INT_Insert\n");
 			if(Vardec->brother != NULL){
@@ -449,11 +450,11 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 }
 
 void DecList_anly(char* Spcid,node* Dec){//Dec is the first child of the DecList
-	Dec_anly(Spcid,Dec);
+	Dec_anly(Spcid,Dec->child);
 	node* p = Dec;
 	while(p->brother != NULL){
 		p = p->brother->brother->child;//next DecList's first child
-		Dec_anly(Spcid,p);
+		Dec_anly(Spcid,p->child);
 	}
 }
 
