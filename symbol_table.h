@@ -474,16 +474,16 @@ void ARRAY_Insert(node *VarDec,char *name,char *spec){
 		q->array.size = a[m];
 		q->array.elem = (Type)malloc(sizeof(struct Type_));
 		q->array.elem->kind = ARRAY;
-		q->array.elem->elem = (Type)malloc(sizeof(struct Type_));
+		q->array.elem->array.elem = (Type)malloc(sizeof(struct Type_));
 		if(strcmp(spec,"int")==0){
-			q->array.elem->elem->kind = Int;
+			q->array.elem->array.elem->kind = Int;
 			printf("%s\n",spec);
 		}
 		else if(strcmp(spec,"float")==0)
-			q->array.elem->elem->kind = Float;
+			q->array.elem->array.elem->kind = Float;
 		else {
-			q->array.elem->elem->kind = STRUCTURE;
-			strcpy(q->array.elem->elem->name,spec);
+			q->array.elem->array.elem->kind = STRUCTURE;
+			strcpy(q->array.elem->array.elem->name,spec);
 		}
 		if(head->child == NULL){
 			head->child = SymbolTable[i];
@@ -510,14 +510,14 @@ void ARRAY_Insert(node *VarDec,char *name,char *spec){
 		q->array.size = a[m];
 		q->array.elem = (Type)malloc(sizeof(struct Type_));
 		q->array.elem->kind = ARRAY;
-		q->array.elem->elem = (Type)malloc(sizeof(struct Type_));
+		q->array.elem->array.elem = (Type)malloc(sizeof(struct Type_));
 		if(strcmp(name,"int")==0)
-			q->array.elem->elem->kind = Int;
+			q->array.elem->array.elem->kind = Int;
 		else if(strcmp(name,"float")==0)
-			q->array.elem->elem->kind = Float;
+			q->array.elem->array.elem->kind = Float;
 		else {
-			q->array.elem->elem->kind = STRUCTURE;
-			strcpy(q->array.elem->elem->name,name);
+			q->array.elem->array.elem->kind = STRUCTURE;
+			strcpy(q->array.elem->array.elem->name,name);
 		}
 		if(head->child == NULL){
 			head->child = temp;
