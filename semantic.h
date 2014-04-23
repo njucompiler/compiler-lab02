@@ -353,8 +353,10 @@ void exp_cal(node* exp){//exp is the node exp
 
 	//--------------------------------------------------Exp LB Exp RB
 	else if(exp->type == 20){
-		if(exp->child->type != 3){//is not array
-			printf("Error type 10 at line %d: %s is not array \n",exp->line,exp->node_value);
+		printf("name %s\n",exp->child->node_value);
+		printf("kind %d\n", get_kind(exp->child->node_value));
+		if(get_kind(exp->child->node_value) != 2){// not array
+			printf("Error type 10 at line %d: %s is not array \n",exp->line,exp->child->node_value);
 			exp->type = 0;
 		}
 		else if(exp->child->brother->brother->type != 1 && exp->child->brother->brother->type != 5 ){
@@ -362,6 +364,7 @@ void exp_cal(node* exp){//exp is the node exp
 			exp->type = 0;
 		}
 		else{//right
+			exp->child->type = 3;
 			exp->type = 3;
 			strcpy(exp->node_value,exp->child->node_value);
 		}
@@ -392,6 +395,8 @@ void exp_cal(node* exp){//exp is the node exp
 				exp->type = 3;
 				strcpy(exp->node_value,exp->child->node_value);
 			}
+			else
+				printf("exp->id error\n");
 		}
 	}
 
@@ -415,7 +420,7 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 		printf("Error type 3 at line %d: Variable is already defined \n",Vardec->line);
 	}
 	else{//not defined
-		printf("Vardec->node_value:%s Vardec->type :%d\n",Vardec->node_value,Vardec->type);
+		//printf("Vardec->node_value:%s Vardec->type :%d\n",Vardec->node_value,Vardec->type);
 		if(strcmp(Spcid,"int")==0){	
 			//printf("INT_Insert\n");
 			if(Vardec->brother != NULL){
@@ -487,9 +492,9 @@ void sem_analysis(node *p) {
 	else if(strcmp(name,"Exp")==0){
 		if(p->child != NULL)
 			sem_analysis(p->child);
+		exp_cal(p);
 		if(p->brother != NULL)
 			sem_analysis(p->brother);
-		exp_cal(p);
 		return;
 	}
 	else if(strcmp(name,"CompSt")==0){

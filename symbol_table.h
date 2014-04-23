@@ -473,7 +473,6 @@ void ARRAY_Insert(node *VarDec,char *name,char *spec){
 		}
 		q->array.size = a[m];
 		q->array.elem = (Type)malloc(sizeof(struct Type_));
-		printf("ab\n");
 		if(strcmp(spec,"int")==0){
 			q->array.elem->kind = Int;
 			printf("%s\n",spec);
