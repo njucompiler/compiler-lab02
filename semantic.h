@@ -542,11 +542,11 @@ void sem_analysis(node *p) {
 			sem_analysis(p->brother);
 		return;
 	}
-	else if(strcmp(name,"StructSpecifier")==0){
+	/*else if(strcmp(name,"StructSpecifier")==0){
 		if(strcmp(p->child->brother->name,"OptTag") == 0){
 			STRUCT_Insert(p);
 		}
-	}
+	}*/
 	if(p->child != NULL)
 		sem_analysis(p->child);
 	if(p->brother != NULL)

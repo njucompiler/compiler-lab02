@@ -471,13 +471,13 @@ void varStruct_Insert(char *name,char *spec){
 void STRUCT_Insert(node *p){
 	if(strcmp(p->child->brother->name,"OptTag") == 0){
 		node *q1 = p->child->brother;
-		int i = hash_pjw(q1->child->name);
+		int i = hash_pjw(q1->child->node_value);
 		if(SymbolTable[i] == NULL){
 			SymbolTable[i] = FieldList_init();
-			strcpy(SymbolTable[i]->name,q1->child->name);
+			strcpy(SymbolTable[i]->name,q1->child->node_value);
 			SymbolTable[i]->type->kind = STRUCTURE;
-			node *DefList = q1->child->brother->brother->brother;		//STRUCT(child) OptTag(b) LC(b) DefList(b) RC(b)
-			/*deflist (c)def (b)deflist*/
+			node *DefList = p->child->brother->brother->brother;		//STRUCT(child) OptTag(b) LC(b) DefList(b) RC(b)
+			/*deflist (c)def (b)deflist*/printf("aa\n");
 			FieldList temp = SymbolTable[i];
 			while(DefList!=NULL){
 				temp->brother = FieldList_init();
@@ -505,9 +505,9 @@ void STRUCT_Insert(node *p){
 			FieldList p = FieldList_init();
 			p->child = SymbolTable[i]->child;
 			SymbolTable[i] = p;
-			strcpy(p->name,q1->child->name);
+			strcpy(p->name,q1->child->node_value);
 			SymbolTable[i]->type->kind = STRUCTURE;
-			node *DefList = q1->child->brother->brother->brother;		//STRUCT(child) OptTag(b) LC(b) DefList(b) RC(b)
+			node *DefList = p->child->brother->brother->brother;		//STRUCT(child) OptTag(b) LC(b) DefList(b) RC(b)
 			/*deflist (c)def (b)deflist*/
 			FieldList temp = p;
 			while(DefList!=NULL){
