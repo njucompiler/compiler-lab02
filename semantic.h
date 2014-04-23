@@ -395,7 +395,21 @@ void exp_cal(node* exp){//exp is the node exp
 
 	//--------------------------------------------------Exp DOT ID
 	else if(exp->type == 21){	
-
+		exp->type = 0;
+		exp->node_value = exp->child->node_value;
+		if(Find(exp->child->node_value) == 0){
+			printf("Error type 1 at line %d: Variable is not defined \n",exp->line);
+			printf("Error type 13 at line %d: Illegal use of “.”",exp->line);
+		}
+		else if(get_kind(exp->child->node_value) != 5){
+			printf("Error type 13 at line %d: Illegal use of “.”",exp->line);
+		}
+		else if(FindStruct(exp->child->node_value,exp->child->brother->brother->node_value) == 0){
+			printf("Error type 14 at line %d: Un-existed field %s\n", exp->line,exp->child->brother->brother->node_value);
+		}
+		else{//right
+			//must add
+		}
 	}
 
 	//---------------------------------------------------ID
@@ -525,11 +539,11 @@ void ExtDef_anly(node* p){//p is the node of Extdef
 		STRUCT_Insert(p->child->child);
 	}
 	else{
-		printf("2\n");
 		if(strcmp(p->child->child->name,"StructSpecifier")==0){
 			STRUCT_Insert(p->child->child);
 		}
 	}
+	printf("2\n");
 }
 
 void sem_analysis(node *p){		
