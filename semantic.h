@@ -499,8 +499,10 @@ void DecList_anly(char* Spcid,node* Dec){//Dec is the first child of the DecList
 void Def_anly(node *p){//p is the first child of the Def
 	node* DecList = p->brother;
 	if(p->type == 4){
+		printf("STRUCT_Insert\n");
 		STRUCT_Insert(p->child);
 	}
+	printf("DecList_anly\n");
 	DecList_anly(p->node_value,DecList->child);
 }
 
@@ -542,11 +544,11 @@ void sem_analysis(node *p) {
 			sem_analysis(p->brother);
 		return;
 	}
-	else if(strcmp(name,"StructSpecifier")==0){
+	/*else if(strcmp(name,"StructSpecifier")==0){
 		if(strcmp(p->child->brother->name,"OptTag") == 0){
 			STRUCT_Insert(p);
 		}
-	}
+	}*/
 	if(p->child != NULL)
 		sem_analysis(p->child);
 	if(p->brother != NULL)
