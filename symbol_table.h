@@ -98,6 +98,31 @@ int Find(char *name){
 	}
 	return 0;
 }
+int FindStruct(char *name,char *insname){
+	int i = hash_pjw(name);
+	FieldList p = SymbolTable[i];
+	while(p!=NULL){
+		if(strcmp(p->name,name) == 0)
+			break;
+		p = p->child;
+	}
+	char sname[20];
+	strcpy(sname,p->type->name);
+	int j = hash_pjw(sname);
+	FieldList q = SymbolTable[i];
+	while(q!=NULL){
+		if(strcmp(q->name,sname) == 0)
+			break;
+		q = q->child;
+	}
+	FieldList temp ;
+	while(!q->brother){
+		q=q->brother;
+		if(strcmp(q->name,insname)==0)
+			return 1;
+	}
+	return 0;
+}
 
 char *get_Array(char *name){
 	int i = hash_pjw(name);
@@ -458,9 +483,9 @@ void STRUCT_Insert(node *p){
 				temp->brother = FieldList_init();
 				temp = temp->brother;				
 				node *TYPEorSTRUCT = DefList->child->child->child;
-				if(strcmp(TYPEorSTRUCT->name,"INT"))
+				if(strcmp(TYPEorSTRUCT->name,"int"))
 					temp->type->kind = Int;
-				else if(strcmp(TYPEorSTRUCT->name,"FLOAT"))
+				else if(strcmp(TYPEorSTRUCT->name,"float"))
 					temp->type->kind = Float;
 				else temp->type->kind = STRUCT;
 				node *DefList = DefList->child->brother;
@@ -489,9 +514,9 @@ void STRUCT_Insert(node *p){
 				temp->brother = FieldList_init();
 				temp = temp->brother;				
 				node *TYPEorSTRUCT = DefList->child->child->child;
-				if(strcmp(TYPEorSTRUCT->name,"INT"))
+				if(strcmp(TYPEorSTRUCT->name,"int"))
 					temp->type->kind = Int;
-				else if(strcmp(TYPEorSTRUCT->name,"FLOAT"))
+				else if(strcmp(TYPEorSTRUCT->name,"float"))
 					temp->type->kind = Float;
 				else temp->type->kind = STRUCT;
 				temp->child = NULL;
