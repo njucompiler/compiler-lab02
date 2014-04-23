@@ -428,7 +428,7 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 			}
 			else{//array
 				printf("ARRAY_Insert int\n");
-				ARRAY_Insert(Vardec,Vardec->node_value);
+				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
 			}
 		}
 		else if(strcmp(Spcid,"float")==0){	
@@ -443,7 +443,7 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 			}
 			else{
 				printf("ARRAY_Insert float\n");
-				ARRAY_Insert(Vardec,Vardec->node_value);
+				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
 			}
 		}
 	}
