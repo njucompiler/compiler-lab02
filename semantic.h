@@ -473,6 +473,17 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
 			}
 		}
+		else{//var of struct 
+			if(Vardec->brother != NULL){
+					printf("Error type 5 at line %d:  Type mismatched\n",Vardec->line);
+			}
+			if(Vardec->type != 3){
+				varStruct_Insert(Vardec->node_value,Spcid);
+			}
+			else{
+				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
+			}
+		}
 	}
 }
 
