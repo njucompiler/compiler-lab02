@@ -111,16 +111,17 @@ char *get_Array(char *name){
 	temp = p->type;
 	while(!temp->array.elem)
 		temp = temp->array.elem;
-	if(temp->kind == Int){
+	//printf("temp->kind:%d\n",temp->array.elem->kind);
+	if(temp->array.elem->kind == Int){
 		printf("int\n");
 		return "int";
 	}
-	else if(temp->kind == Float){
+	else if(temp->array.elem->kind == Float){
 		printf("float\n");
 		return "float";
 	}
 	else{
-		printf("struct :%s\n",temp->name); 
+		printf("struct :%s\n",temp->array.elem->name); 
 		return temp->name;
 	}
 }
