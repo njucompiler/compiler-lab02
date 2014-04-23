@@ -61,7 +61,7 @@ ExtDecList
 	|	VarDec COMMA ExtDecList		{ $$ = reduction("ExtDecList",@1.first_line,3, $1, $2, $3); }
 	;
 Specifier
-	:	TYPE				{ $$ = reduction("Specifier", @1.first_line,1, $1); strcpy($$->node_value,$1->node_value);}
+	:	TYPE				{ $$ = reduction("Specifier", @1.first_line,1, $1); $$->type=0; strcpy($$->node_value,$1->node_value);}
 	|	StructSpecifier			{ $$ = reduction("Specifier", @1.first_line,1, $1); $$->type = 4; strcpy($$->node_value,$1->node_value);}
 	;
 StructSpecifier

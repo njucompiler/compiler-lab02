@@ -27,8 +27,8 @@
 }*/
 
 int exp_cmp(node* left,node*right){
-	int ltype,rtype;
-	printf("array->type %s\n",get_Array(left->node_value));
+	int ltype = left->type;
+	int rtype = right->type;
 	if(left->type == 3 || right->type == 3){
 		if(left->type == 3){
 			if(strcmp(get_Array(left->node_value),"int") == 0){
@@ -50,10 +50,6 @@ int exp_cmp(node* left,node*right){
 			else//struct
 				rtype = 4;
 		}
-	}
-	else{
-		int ltype = left->type;
-		int rtype = right->type;
 	}
 	if(ltype == 0 || rtype == 0)
 		return 1;
@@ -114,7 +110,7 @@ void exp_cal(node* exp){//exp is the node exp
 		if(exp_cmp(left,right)==1){
 			exp->type = exp->child->type;
 			if(left->type == 1 || left->type == 2)
-				printf("Error type 6 at line %d:The left-hand side of anassignment must be a variable\n",exp->line);
+				printf("Error type 6 at line %d:  The left-hand side of anassignment must be a variable\n",exp->line);
 			else{
 				exp->type = left->type;
 				if(left->type == 5){
@@ -128,7 +124,7 @@ void exp_cal(node* exp){//exp is the node exp
 			}
 		}
 		else
-			printf("Error type 5 at line %d:Type mismatched\n",exp->line);
+			printf("Error type 5 at line %d:  Type mismatched\n",exp->line);
 	}
 	//-------------------------------------------------Exp AND Exp
 	else if(exp->type == 8){
@@ -238,7 +234,7 @@ void exp_cal(node* exp){//exp is the node exp
 			}
 		}
 		else
-			printf("Error type 5 at line %d:Type mismatched\n",exp->line);
+			printf("Error type 5 at line %d: Type mismatched\n",exp->line);
 	}
 
 	//-------------------------------------------------Exp PLUS Exp
@@ -256,7 +252,7 @@ void exp_cal(node* exp){//exp is the node exp
 			}
 		}
 		else
-			printf("Error type 5 at line %d:Type mismatched\n",exp->line);
+			printf("Error type 5 at line %d:  Type mismatched\n",exp->line);
 	}
 
 	//-------------------------------------------------Exp MINUS Exp
@@ -274,7 +270,7 @@ void exp_cal(node* exp){//exp is the node exp
 			}
 		}
 		else
-			printf("Error type 5 at line %d:Type mismatched\n",exp->line);
+			printf("Error type 5 at line %d:  Type mismatched\n",exp->line);
 	}
 
 	//--------------------------------------------------Exp STAR Exp
@@ -292,7 +288,7 @@ void exp_cal(node* exp){//exp is the node exp
 			}
 		}
 		else
-			printf("Error type 5 at line %d:Type mismatched\n",exp->line);
+			printf("Error type 5 at line %d:  Type mismatched\n",exp->line);
 	}
 
 	//--------------------------------------------------Exp DIV Exp
@@ -310,7 +306,7 @@ void exp_cal(node* exp){//exp is the node exp
 			}
 		}
 		else
-			printf("Error type 5 at line %d:Type mismatched\n",exp->line);
+			printf("Error type 5 at line %d:  Type mismatched\n",exp->line);
 	}
 
 	//--------------------------------------------------LP Exp RP
@@ -346,7 +342,7 @@ void exp_cal(node* exp){//exp is the node exp
 			printf("Error type 2 at line %d: Function %s is not defined \n",exp->line,exp->child->node_value);
 		}
 		else if(get_kind(exp->child->node_value) != 4){
-			printf("Error type 2 at line %d: Function %s is not defined\n",exp->line,exp->child->node_value);
+			printf("Error type 11 at line %d: %s must be a function\n",exp->line,exp->child->node_value);
 		}
 		//else if{
 			//varlist not match
@@ -367,7 +363,7 @@ void exp_cal(node* exp){//exp is the node exp
 			printf("Error type 2 at line %d: Function %s is not defined \n",exp->line,exp->child->node_value);
 		}
 		else if(get_kind(exp->child->node_value) != 4){
-			printf("Error type 2 at line %d: Function %s is not defined\n",exp->line,exp->child->node_value);
+			printf("Error type 11 at line %d: %s must be a function\n",exp->line,exp->child->node_value);
 		}
 		else{//exp's type is the return of func
 			char* RUTURN = get_return(exp->child->node_value);
@@ -380,10 +376,10 @@ void exp_cal(node* exp){//exp is the node exp
 
 	//--------------------------------------------------Exp LB Exp RB
 	else if(exp->type == 20){
-		printf("name %s\n",exp->child->node_value);
-		printf("kind %d\n", get_kind(exp->child->node_value));
+		//printf("name %s\n",exp->child->node_value);
+		//printf("kind %d\n", get_kind(exp->child->node_value));
 		if(get_kind(exp->child->node_value) != 2){// not array
-			printf("Error type 10 at line %d: %s is not array \n",exp->line,exp->child->node_value);
+			printf("Error type 10 at line %d: %s must be an array\n",exp->line,exp->child->node_value);
 			exp->type = 0;
 		}
 		else if(exp->child->brother->brother->type != 1 && exp->child->brother->brother->type != 5 ){
@@ -407,6 +403,7 @@ void exp_cal(node* exp){//exp is the node exp
 		if(Find(exp->child->node_value)==0){//var is not in the table
 			printf("Error type 1 at line %d: Variable is not defined \n",exp->line);
 			exp->type = 0;
+			strcpy(exp->node_value ,exp->child->node_value);
 		}
 		else{
 			int kind = get_kind(exp->child->node_value);
@@ -452,14 +449,13 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 			//printf("INT_Insert\n");
 			if(Vardec->brother != NULL){
 				if(Vardec->brother->brother->type != 1 || Vardec->brother->brother->type != 5){
-					printf("Error type 5 at line %d:Type mismatched\n",Vardec->line);
+					printf("Error type 5 at line %d:  Type mismatched\n",Vardec->line);
 				}
 			}
 			if(Vardec->type != 3){
 				INT_Insert(Vardec->node_value,0);		
 			}
 			else{//array
-				printf("ARRAY_Insert int\n");
 				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
 			}
 		}
@@ -467,14 +463,13 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 			//printf("FLOAT_Insert\n");
 			if(Vardec->brother != NULL){
 				if(Vardec->brother->brother->type != 2 || Vardec->brother->brother->type != 6){
-					printf("Error type 5 at line %d:Type mismatched\n",Vardec->line);
+					printf("Error type 5 at line %d:  Type mismatched\n",Vardec->line);
 				}
 			}
 			if(Vardec->type != 3){
 				FLOAT_Insert(Vardec->node_value,0);
 			}
 			else{
-				printf("ARRAY_Insert float\n");
 				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
 			}
 		}
@@ -492,6 +487,9 @@ void DecList_anly(char* Spcid,node* Dec){//Dec is the first child of the DecList
 
 void Def_anly(node *p){//p is the first child of the Def
 	node* DecList = p->brother;
+	if(p->type == 4){
+		STRUCT_Insert(p->child);
+	}
 	DecList_anly(p->node_value,DecList->child);
 }
 

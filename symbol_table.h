@@ -111,13 +111,10 @@ char *get_Array(char *name){
 	temp = p->type;
 	while(!temp->array.elem)
 		temp = temp->array.elem;
-	//printf("temp->kind:%d\n",temp->array.elem->kind);
 	if(temp->array.elem->kind == Int){
-		printf("int\n");
 		return "int";
 	}
 	else if(temp->array.elem->kind == Float){
-		printf("float\n");
 		return "float";
 	}
 	else{
