@@ -86,6 +86,7 @@ void exp_cal(node* exp){//exp is the node exp
 		node* left = exp->child;
 		node* right = left->brother->brother;
 		if(exp_cmp(left,right)==1){
+			exp->type = exp->child->type;
 			if(left->type == 1 || left->type == 2)
 				printf("Error type 6 at line %d:The left-hand side of anassignment must be a variable\n",exp->line);
 			else{
