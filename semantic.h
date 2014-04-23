@@ -473,7 +473,7 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
 			}
 		}
-		else{//var of struct 
+		/*else{//var of struct 
 			if(Vardec->brother != NULL){
 					printf("Error type 5 at line %d:  Type mismatched\n",Vardec->line);
 			}
@@ -483,7 +483,7 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 			else{
 				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
 			}
-		}
+		}*/
 	}
 }
 
@@ -502,7 +502,6 @@ void Def_anly(node *p){//p is the first child of the Def
 		printf("STRUCT_Insert\n");
 		STRUCT_Insert(p->child);
 	}
-	printf("DecList_anly\n");
 	DecList_anly(p->node_value,DecList->child);
 }
 
@@ -516,16 +515,31 @@ void FunDec_def(node *p){
 	}
 }
 
+void ExtDef_anly(node* p){//p is the node of Extdef
+	printf("p->child->child :%s\n",p->child->child->name);
+	if(strcmp(p->child->brother->name,"FunDec")==0){//func defiend
+		FunDec_def(p);
+	}
+	else if(strcmp(p->child->child->name,"StructSpecifier")==0){
+		printf("1\n");
+		STRUCT_Insert(p->child->child);
+	}
+	else{
+		printf("2\n");
+		if(strcmp(p->child->child->name,"StructSpecifier")==0){
+			STRUCT_Insert(p->child->child);
+		}
+	}
+}
 
-void sem_analysis(node *p) {		
+void sem_analysis(node *p){		
 	char name[20];
 	strcpy(name,p->name);
 	Stackhead_init();
 	if(strcmp(name,"Def")==0)
 		Def_anly(p->child);
 	else if(strcmp(name,"ExtDef")==0){
-		if(strcmp(p->child->brother->name,"FunDec")==0)
-			FunDec_def(p);
+		ExtDef_anly(p);
 	}
 	else if(strcmp(name,"Exp")==0){
 		if(p->child != NULL)

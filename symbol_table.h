@@ -477,7 +477,6 @@ void STRUCT_Insert(node *p){
 			strcpy(SymbolTable[i]->name,q1->child->node_value);
 			SymbolTable[i]->type->kind = STRUCTURE;
 			node *DefList = p->child->brother->brother->brother;		//STRUCT(child) OptTag(b) LC(b) DefList(b) RC(b)
-			/*deflist (c)def (b)deflist*/printf("aa\n");
 			FieldList temp = SymbolTable[i];
 			while(DefList!=NULL){
 				temp->brother = FieldList_init();
