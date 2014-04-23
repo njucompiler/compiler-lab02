@@ -57,7 +57,7 @@ void stack_pop(Stackhead *p){//delete
 			q1 = q;
 			q = q->child;
 		}
-		if(!q1){
+		if(q1!=NULL){
 			if(SymbolTable[i]->child){
 				SymbolTable[i] = SymbolTable[i]->child;
 			}
@@ -109,17 +109,17 @@ int FindStruct(char *name,char *insname){
 	char sname[20];
 	strcpy(sname,p->type->name);
 	int j = hash_pjw(sname);
-	FieldList q = SymbolTable[i];
+	FieldList q = SymbolTable[j];
 	while(q!=NULL){
 		if(strcmp(q->name,sname) == 0)
 			break;
 		q = q->child;
 	}
-	FieldList temp ;
-	while(!q->brother){
+	while(q->brother!=NULL){
 		q=q->brother;
-		if(strcmp(q->name,insname)==0)
+		if(strcmp(q->name,insname)==0){
 			return 1;
+}
 	}
 	return 0;
 }
@@ -134,7 +134,7 @@ char *get_Array(char *name){
 	}
 	Type temp;
 	temp = p->type;
-	while(!temp->array.elem)
+	while(temp->array.elem!=NULL)
 		temp = temp->array.elem;
 	if(temp->array.elem->kind == Int){
 		return "int";
@@ -143,7 +143,6 @@ char *get_Array(char *name){
 		return "float";
 	}
 	else{
-		printf("struct :%s\n",temp->array.elem->name); 
 		return temp->name;
 	}
 }
@@ -481,20 +480,40 @@ void STRUCT_Insert(node *p){
 			while(DefList!=NULL){
 				temp->brother = FieldList_init();
 				temp = temp->brother;				
-				node *TYPEorSTRUCT = DefList->child->child->child;	
-				if(strcmp(TYPEorSTRUCT->node_value,"int"))
+				node *TYPEorSTRUCT = DefList->child->child->child;
+				node *DecList = DefList->child->child->brother;
+				while(DecList!=NULL){
+					node *vardec = DecList->child->child;
+					if(strcmp(TYPEorSTRUCT->node_value,"int"))
+						temp->type->kind = Int;
+					else if(strcmp(TYPEorSTRUCT->node_value,"float"))
+						temp->type->kind = Float;
+					else {
+						temp->type->kind = STRUCTURE;
+						strcmp(temp->type->name,TYPEorSTRUCT->child->brother->node_value);
+					}
+					strcpy(temp->name,vardec->child->node_value);
+					if(DecList->child->brother!=NULL){
+						DecList = DecList->child->brother->brother;
+						temp->brother = FieldList_init();
+						temp = temp->brother;	
+					}
+					else break;
+				}
+				/*if(strcmp(TYPEorSTRUCT->node_value,"int"))
 					temp->type->kind = Int;
 				else if(strcmp(TYPEorSTRUCT->node_value,"float"))
 					temp->type->kind = Float;
 				else {
 					temp->type->kind = STRUCTURE;
 					strcmp(temp->type->name,TYPEorSTRUCT->child->brother->node_value);
-				}
+				}*/
+				temp->child = NULL;
+				temp->brother = NULL;	
 				if(!DefList->child->brother)
 					DefList = DefList->child->brother;
 				else break;
-				temp->child = NULL;
-				temp->brother = NULL;		
+	
 			}
 			if(head->child == NULL){
 				head->child = SymbolTable[i];
@@ -518,19 +537,38 @@ void STRUCT_Insert(node *p){
 				temp->brother = FieldList_init();
 				temp = temp->brother;				
 				node *TYPEorSTRUCT = DefList->child->child->child;
-				if(strcmp(TYPEorSTRUCT->node_value,"int"))
+				node *DecList = DefList->child->child->brother;
+				while(DecList!=NULL){
+					node *vardec = DecList->child->child;
+					if(strcmp(TYPEorSTRUCT->node_value,"int"))
+						temp->type->kind = Int;
+					else if(strcmp(TYPEorSTRUCT->node_value,"float"))
+						temp->type->kind = Float;
+					else {
+						temp->type->kind = STRUCTURE;
+						strcmp(temp->type->name,TYPEorSTRUCT->child->brother->node_value);
+					}
+					strcpy(temp->name,vardec->child->node_value);
+					if(DecList->child->brother!=NULL){
+						DecList = DecList->child->brother->brother;
+						temp->brother = FieldList_init();
+						temp = temp->brother;	
+					}
+					else break;
+				}
+				/*if(strcmp(TYPEorSTRUCT->node_value,"int"))
 					temp->type->kind = Int;
 				else if(strcmp(TYPEorSTRUCT->node_value,"float"))
 					temp->type->kind = Float;
 				else {
 					temp->type->kind = STRUCTURE;
 					strcmp(temp->type->name,TYPEorSTRUCT->child->brother->node_value);
-				}
+				}*/
 				temp->child = NULL;
-				temp->brother = NULL;
+				temp->brother = NULL;	
 				if(!DefList->child->brother)
 					DefList = DefList->child->brother;
-				else break;			
+				else break;
 			}
 			if(head->child == NULL){
 				head->child = s;
@@ -570,7 +608,6 @@ void ARRAY_Insert(node *VarDec,char *name,char *spec){
 		q->array.elem = (Type)malloc(sizeof(struct Type_));
 		if(strcmp(spec,"int")==0){
 			q->array.elem->kind = Int;
-			printf("%s\n",spec);
 		}
 		else if(strcmp(spec,"float")==0)
 			q->array.elem->kind = Float;
