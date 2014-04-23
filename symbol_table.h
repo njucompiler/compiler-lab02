@@ -493,6 +493,7 @@ void ARRAY_Insert(node *VarDec,char *name,char *spec){
 			SymbolTable[i]->scope = head->child;
 			head->child = SymbolTable[i];
 		}
+		SymbolTable[i]->type->kind;
 	}
 	else{
 		FieldList temp = FieldList_init();
