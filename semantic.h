@@ -2,6 +2,8 @@
 #include "symbol_table.h"
 #include "node.h"
 
+void sem_analysis(node *p);
+
 /*void ParamDec_anly(node *p){//p is the first child of the ParamDec
 	char* spcid;
 	spcid = getSpecifier_id(p);
@@ -252,7 +254,7 @@ void exp_cal(node* exp){//exp is the node exp
 			}
 		}
 		else
-			printf("Error type 5 at line %d:  Type mismatched\n",exp->line);
+			printf("Error type 7 at line %d:  Operands type mismatched \n",exp->line);
 	}
 
 	//-------------------------------------------------Exp MINUS Exp
@@ -270,7 +272,7 @@ void exp_cal(node* exp){//exp is the node exp
 			}
 		}
 		else
-			printf("Error type 5 at line %d:  Type mismatched\n",exp->line);
+			printf("Error type 5 at line %d:  Operands type mismatched \n",exp->line);
 	}
 
 	//--------------------------------------------------Exp STAR Exp
@@ -288,7 +290,7 @@ void exp_cal(node* exp){//exp is the node exp
 			}
 		}
 		else
-			printf("Error type 5 at line %d:  Type mismatched\n",exp->line);
+			printf("Error type 5 at line %d:  Operands type mismatched \n",exp->line);
 	}
 
 	//--------------------------------------------------Exp DIV Exp
@@ -306,12 +308,13 @@ void exp_cal(node* exp){//exp is the node exp
 			}
 		}
 		else
-			printf("Error type 5 at line %d:  Type mismatched\n",exp->line);
+			printf("Error type 5 at line %d:  Operands type mismatched \n",exp->line);
 	}
 
 	//--------------------------------------------------LP Exp RP
 	else if(exp->type == 15){
-
+		exp->type = exp->child->type;
+		strcpy(exp->node_value,exp->child->node_value); 
 	}
 
 	//--------------------------------------------------MINUS Exp
@@ -405,11 +408,23 @@ void exp_cal(node* exp){//exp is the node exp
 		else if(get_kind(exp->child->node_value) != 5){
 			printf("Error type 13 at line %d: Illegal use of “.”",exp->line);
 		}
-		else if(FindStruct(exp->child->node_value,exp->child->brother->brother->node_value) == 0){
+		else if(strcmp(FindStruct(exp->child->node_value,exp->child->brother->brother->node_value),"NULL") == 0){
 			printf("Error type 14 at line %d: Un-existed field %s\n", exp->line,exp->child->brother->brother->node_value);
 		}
-		else{//right
-			//must add
+		else{
+			strcat(exp->node_value,".");
+			strcat(exp->node_value,exp->child->brother->brother->node_value);
+			char* type = FindStruct(exp->child->node_value,exp->child->brother->brother->node_value);
+			printf("type:%s\n",type);
+			if(strcmp(type,"int")==0){
+				exp->type = 5;
+			}
+			else if(strcmp(type,"float")==0){
+				exp->type = 6;
+			}
+			/*else if(strcmp(type,"array")==0){
+				exp->type = 3;
+			}*/
 		}
 	}
 
@@ -458,16 +473,17 @@ void exp_cal(node* exp){//exp is the node exp
 }
 
 void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
-	//if(strcmp(Vardec->node_value,"a")==0){
 	if(Find(Vardec->node_value)==1){//var is already in the table
-		printf("Error type 3 at line %d: Variable is already defined \n",Vardec->line);
+		printf("Error type 3 at line %d: Redefined variable '%s' \n",Vardec->line,Vardec->node_value);
 	}
 	else{//not defined
-		//printf("Vardec->node_value:%s Vardec->type :%d\n",Vardec->node_value,Vardec->type);
+		if(Vardec->brother != NULL){
+			sem_analysis(Vardec->brother->brother);
+		}
 		if(strcmp(Spcid,"int")==0){	
 			//printf("INT_Insert\n");
 			if(Vardec->brother != NULL){
-				if(Vardec->brother->brother->type != 1 || Vardec->brother->brother->type != 5){
+				if(Vardec->brother->brother->type != 1 && Vardec->brother->brother->type != 5){
 					printf("Error type 5 at line %d:  Type mismatched\n",Vardec->line);
 				}
 			}
@@ -481,7 +497,7 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 		else if(strcmp(Spcid,"float")==0){	
 			//printf("FLOAT_Insert\n");
 			if(Vardec->brother != NULL){
-				if(Vardec->brother->brother->type != 2 || Vardec->brother->brother->type != 6){
+				if(Vardec->brother->brother->type != 2 && Vardec->brother->brother->type != 6){
 					printf("Error type 5 at line %d:  Type mismatched\n",Vardec->line);
 				}
 			}
@@ -516,14 +532,21 @@ void DecList_anly(char* Spcid,node* Dec){//Dec is the first child of the DecList
 }
 
 void Def_anly(node *p){//p is the first child of the Def
-	node* DecList = p->brother;
-	DecList_anly(p->node_value,DecList->child);
+	if(strcmp(p->child->name,"StructSpecifier")==0){
+		if(Find(p->child->node_value)==0){
+			printf("Error type 17 at line %d: Undefined struct “%s” \n",p->line,p->child->node_value);
+		}
+	}
+	else{
+		node* DecList = p->brother;
+		DecList_anly(p->node_value,DecList->child);
+	}
 }
 
 void FunDec_def(node *p){
 	node* FunDec = p->child->brother;
 	if(Find(FunDec->child->node_value)==1){//var is already in the table
-		printf("Error type 4 at line %d: FunDec is already defined \n",FunDec->line);
+		printf("Error type 4 at line %d: Redefined function “%s” \n",FunDec->line,FunDec->child->node_value);
 	}
 	else{
 		FUNC_Insert(p);
@@ -535,11 +558,33 @@ void ExtDef_anly(node* p){//p is the node of Extdef
 		FunDec_def(p);
 	}
 	else if(strcmp(p->child->child->name,"StructSpecifier")==0){
-		STRUCT_Insert(p->child->child);
+		node* structspecifer = p->child->child;//structspecifer
+		if(structspecifer->child->brother->brother != NULL){//define
+			if(Find(structspecifer->node_value)==1){
+				printf("Error type 16 at line %d: Duplicated name ‘%s’\n",p->child->child->line,p->child->child->node_value);
+			}
+			else
+				STRUCT_Insert(p->child->child);
+		}
+		else{
+			if(Find(structspecifer->node_value)==0){
+				printf("Error type 17 at line %d:Undefined struct ‘%s’\n",structspecifer->line,structspecifer->node_value);
+			}
+		}
 	}
-	else{
-		if(strcmp(p->child->child->name,"StructSpecifier")==0){
-			STRUCT_Insert(p->child->child);
+	else{//???
+		node* structspecifer = p->child->child;//structspecifer
+		if(structspecifer->child->brother->brother != NULL){//define
+			if(Find(structspecifer->node_value)==1){
+				printf("Error type 16 at line %d: Duplicated name ‘%s’\n",p->child->child->line,p->child->child->node_value);
+			}
+			else
+				STRUCT_Insert(p->child->child);
+		}
+		else{
+			if(Find(structspecifer->node_value)==0){
+				printf("Error type 17 at line %d:Undefined struct ‘%s’\n",structspecifer->line,structspecifer->node_value);
+			}
 		}
 	}
 }
@@ -568,6 +613,15 @@ void sem_analysis(node *p){
 		stack_pop(head);
 		if(p->brother != NULL)
 			sem_analysis(p->brother);
+		return;
+	}
+	else if(strcmp(name,"Args")==0){
+		sem_analysis(p->child);
+		node* temp = p->child;
+		while(temp->brother != NULL){
+			temp = temp->brother->brother;
+			sem_analysis(temp);
+		}
 		return;
 	}
 	/*else if(strcmp(name,"StructSpecifier")==0){

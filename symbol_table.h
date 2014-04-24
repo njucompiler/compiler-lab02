@@ -146,6 +146,7 @@ char* FindStruct(char *name,char *insname){
 			else if(q->type->kind == Float)
 				return "float";
 			else if(q->type->kind == ARRAY){
+				//return "array";
 				return get_Array(q->name);
 			}
 			else{
