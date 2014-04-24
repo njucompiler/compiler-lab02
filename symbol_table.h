@@ -98,32 +98,6 @@ int Find(char *name){
 	}
 	return 0;
 }
-int FindStruct(char *name,char *insname){
-	int i = hash_pjw(name);
-	FieldList p = SymbolTable[i];
-	while(p!=NULL){
-		if(strcmp(p->name,name) == 0)
-			break;
-		p = p->child;
-	}
-	char sname[20];
-	strcpy(sname,p->type->name);
-	int j = hash_pjw(sname);
-	FieldList q = SymbolTable[j];
-	while(q!=NULL){
-		if(strcmp(q->name,sname) == 0)
-			break;
-		q = q->child;
-	}
-	while(q->brother!=NULL){
-		q=q->brother;
-		if(strcmp(q->name,insname)==0){
-			return 1;
-}
-	}
-	return 0;
-}
-
 char *get_Array(char *name){
 	int i = hash_pjw(name);
 	FieldList p = SymbolTable[i];
@@ -146,6 +120,42 @@ char *get_Array(char *name){
 		return temp->name;
 	}
 }
+
+char* FindStruct(char *name,char *insname){
+	int i = hash_pjw(name);
+	FieldList p = SymbolTable[i];
+	while(p!=NULL){
+		if(strcmp(p->name,name) == 0)
+			break;
+		p = p->child;
+	}
+	char sname[20];
+	strcpy(sname,p->type->name);
+	int j = hash_pjw(sname);
+	FieldList q = SymbolTable[j];
+	while(q!=NULL){
+		if(strcmp(q->name,sname) == 0)
+			break;
+		q = q->child;
+	}
+	while(q->brother!=NULL){
+		q=q->brother;
+		if(strcmp(q->name,insname)==0){
+			if(q->type->kind == Int)
+				return "int";
+			else if(q->type->kind == Float)
+				return "float";
+			else if(q->type->kind == ARRAY){
+				return get_Array(q->name);
+			}
+			else{
+				return q->type->name;
+			}
+		}
+	}
+	return "NULL";
+}
+
 
 int get_kind(char *name){
 	int i = hash_pjw(name);
