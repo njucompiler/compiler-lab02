@@ -57,11 +57,8 @@ void stack_pop(Stackhead *p){//delete
 			q1 = q;
 			q = q->child;
 		}
-		if(q1!=NULL){
-			if(SymbolTable[i]->child){
-				SymbolTable[i] = SymbolTable[i]->child;
-			}
-			else SymbolTable[i] = NULL;
+		if(q1==NULL){
+			SymbolTable[i] = NULL;
 		}
 		else{
 			if(q->child){
