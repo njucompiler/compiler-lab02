@@ -398,7 +398,6 @@ void exp_cal(node* exp){//exp is the node exp
 		exp->type = 0;
 		strcpy(exp->node_value,exp->child->node_value);
 		printf("kind: %d\n",get_kind(exp->child->node_value));
-		printf("struct:%s  name:%s\n",exp->child->node_value,exp->child->brother->brother->node_value);
 		if(Find(exp->child->node_value) == 0){
 			printf("Error type 1 at line %d: Variable is not defined \n",exp->line);
 			printf("Error type 13 at line %d: Illegal use of “.”",exp->line);
@@ -498,9 +497,7 @@ void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 				printf("Error type 5 at line %d:  Type mismatched\n",Vardec->line);
 			}
 			if(Vardec->type != 3){
-				printf("varStruct_Insert\n");
 				varStruct_Insert(Vardec->node_value,Spcid);
-				printf("varStruct_Insert finised\n");
 			}
 			else{
 				ARRAY_Insert(Vardec,Vardec->node_value,Spcid);
