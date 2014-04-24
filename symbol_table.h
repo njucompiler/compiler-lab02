@@ -74,6 +74,7 @@ void stack_pop(Stackhead *p){//delete
 }
 
 
+
 unsigned int hash_pjw(char* name)
 {
 	unsigned int val = 0, i;
@@ -155,6 +156,65 @@ char* FindStruct(char *name,char *insname){
 	}
 	return "NULL";
 }
+char *finds(char *name){
+	int i = hash_pjw(name);
+	FieldList p = SymbolTable[i];
+	while(p!=NULL){
+		if(strcmp(p->name,name) == 0)
+			break;
+		p = p->child;
+	}
+	return p->type->name;
+}
+int Args_match(node *ID){
+	node *Args = ID->brother->brother;
+	char *name = ID->node_value;
+	int i = hash_pjw(ID->node_value);
+	FieldList p = SymbolTable[i];
+	while(p!=NULL){
+		if(strcmp(p->name,name) == 0)
+			break;
+		p = p->child;
+	}
+	if(strcmp(Args->name,"Args")==0){
+		if(p->type->func.brother==NULL)
+			return 0;
+		FuncVar *temp = p->type->func.brother;
+		
+		while(temp!=NULL){
+			node *exp = Args->child;
+			if(exp->type == 1)
+				if(strcmp(temp->kind,"INT") != 0)
+					return 0;
+			else if(exp->type == 2)
+				if(strcmp(temp->kind,"FLOAT") != 0)
+					return 0;
+			else{
+				
+				node *id = exp->child;
+				char* structname = finds(id->node_value);
+				if(strcmp(temp->kind,structname)!=0)
+					return 0;
+			}
+			if(temp->next!=NULL)
+				temp = temp->next;
+			else break;
+			if(!Args->child->brother)
+				Args = Args->child->brother->brother;
+			else return 0;
+		}
+		if(Args->child->brother)
+			return 1;
+		else return 0;
+	}
+	else{
+		if(p->type->func.brother==NULL)
+			return 1;
+		else
+			return 0;
+	}
+	//return 1;
+} 
 
 
 int get_kind(char *name){
