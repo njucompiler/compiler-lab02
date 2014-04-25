@@ -610,7 +610,7 @@ void sem_analysis(node *p){
 		stack_push();
 		if(p->child != NULL)
 			sem_analysis(p->child);
-		stack_pop(head);
+		stack_pop(head->brother);
 		if(p->brother != NULL)
 			sem_analysis(p->brother);
 		return;
