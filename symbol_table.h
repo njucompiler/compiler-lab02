@@ -37,7 +37,7 @@ FieldList FieldList_init(){
 	temp->type = (Type)malloc(sizeof(struct Type_));
 	return temp;
 }
-void stack_push(){
+void stack_push(){//
 	Stackhead *temp = (Stackhead *)malloc(sizeof(Stackhead));
 	if(head == NULL) return;
 	temp->brother = head;
@@ -83,7 +83,7 @@ unsigned int hash_pjw(char* name)
 	return val%32;
 }
 
-int Find(char *name){
+int Find(char *name){//查找该名字是否在变量表
 	int i = hash_pjw(name);
 	if(SymbolTable[i] == NULL){
 		return 0;
@@ -96,7 +96,7 @@ int Find(char *name){
 	}
 	return 0;
 }
-char *get_Array(char *name){
+char *get_Array(char *name){//返回数组存储元素的类型
 	int i = hash_pjw(name);
 	FieldList p = SymbolTable[i];
 	while(p!=NULL){
@@ -119,7 +119,7 @@ char *get_Array(char *name){
 	}
 }
 
-char* FindStruct(char *name,char *insname){
+char* FindStruct(char *name,char *insname){//确定inname是否在该struct中
 	int i = hash_pjw(name);
 	FieldList p = SymbolTable[i];
 	while(p!=NULL){
@@ -164,7 +164,7 @@ char *finds(char *name){
 	}
 	return p->type->name;
 }
-int Args_match(node *ID){
+int Args_match(node *ID){//函数参数匹配
 	node *Args = ID->brother->brother;
 	char *name = ID->node_value;
 	int i = hash_pjw(ID->node_value);
@@ -215,7 +215,7 @@ int Args_match(node *ID){
 } 
 
 
-int get_kind(char *name){
+int get_kind(char *name){//获得存储元素的类型
 	int i = hash_pjw(name);
 	while(SymbolTable[i] != NULL){
 		if(strcmp(SymbolTable[i]->name,name) == 0) 
@@ -224,11 +224,24 @@ int get_kind(char *name){
 	return -1;
 }
 
-char* get_return(char *name){
+char* get_structname(char* varstruct){//获得struct变量的struct名字
+	int i = hash_pjw(varstruct);
+	FieldList temp = SymbolTable[i];
+	while(temp != NULL){
+		if(strcmp(temp->name,varstruct) == 0) 
+			return temp->type->name;
+		temp = temp->child;
+	}
+	return "NULL";
+}
+
+char* get_return(char *name){//取得函数返回值
 	int i = hash_pjw(name);
-	while(SymbolTable[i] != NULL){
-		if(strcmp(SymbolTable[i]->name,name) == 0) 
-			return SymbolTable[i]->type->func.RETURN;
+	FieldList temp = SymbolTable[i];
+	while(temp != NULL){
+		if(strcmp(temp->name,name) == 0) 
+			return temp->type->func.RETURN;
+		temp = temp->child;
 	}
 	return "-1";
 }

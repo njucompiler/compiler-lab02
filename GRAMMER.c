@@ -46,7 +46,7 @@ VarList	//变量定义list，无操作
 ParamDec //params
 	:	Specifier VarDec		
 	;
-CompSt	//无操作
+CompSt	//
 	:	LC DefList StmtList RC		
 	|	error RC	
 	;

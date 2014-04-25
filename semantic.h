@@ -2,6 +2,8 @@
 #include "symbol_table.h"
 #include "node.h"
 
+int instruct = 0;//表示是否在结构体定义中
+
 void sem_analysis(node *p);
 
 /*void ParamDec_anly(node *p){//p is the first child of the ParamDec
@@ -31,7 +33,14 @@ void sem_analysis(node *p);
 int exp_cmp(node* left,node*right){
 	int ltype = left->type;
 	int rtype = right->type;
-	if(left->type == 3 || right->type == 3){
+	if(left->type == 4 && right->type == 4){
+		if(strcmp(get_structname(left->node_value),get_structname(right->node_value))==0){
+			return 1;
+		}
+		else
+			return 0;
+	}
+	else if(left->type == 3 || right->type == 3){
 		if(left->type == 3){
 			if(strcmp(get_Array(left->node_value),"int") == 0){
 				ltype = 5;
@@ -347,10 +356,9 @@ void exp_cal(node* exp){//exp is the node exp
 		else if(get_kind(exp->child->node_value) != 4){
 			printf("Error type 11 at line %d: %s must be a function\n",exp->line,exp->child->node_value);
 		}
-		//else if{
-			//varlist not match
-
-		//}
+		else if(Args_match(exp->child)==0){//varlist not match
+			printf("Error type 9 at line %d: The method “%s” is notapplicable”\n",exp->line,exp->child->node_value);
+		}
 		else{//exp's type is the return of func
 			char* RUTURN = get_return(exp->child->node_value);
 			if(strcmp(RUTURN,"INT")==0)
@@ -474,7 +482,10 @@ void exp_cal(node* exp){//exp is the node exp
 
 void Dec_anly(char* Spcid,node* Vardec){//vardec is the first child of the Dec
 	if(Find(Vardec->node_value)==1){//var is already in the table
-		printf("Error type 3 at line %d: Redefined variable '%s' \n",Vardec->line,Vardec->node_value);
+		if(instruct == 0)
+			printf("Error type 3 at line %d: Redefined variable '%s' \n",Vardec->line,Vardec->node_value);
+		else
+			printf("Error type 15 at line %d: Redefined field ‘%s’\n",Vardec->line, Vardec->node_value);
 	}
 	else{//not defined
 		if(Vardec->brother != NULL){
@@ -535,12 +546,11 @@ void Def_anly(node *p){//p is the first child of the Def
 	if(strcmp(p->child->name,"StructSpecifier")==0){
 		if(Find(p->child->node_value)==0){
 			printf("Error type 17 at line %d: Undefined struct “%s” \n",p->line,p->child->node_value);
+			return;
 		}
 	}
-	else{
-		node* DecList = p->brother;
-		DecList_anly(p->node_value,DecList->child);
-	}
+	node* DecList = p->brother;
+	DecList_anly(p->node_value,DecList->child);
 }
 
 void FunDec_def(node *p){
@@ -595,7 +605,14 @@ void sem_analysis(node *p){
 	if(strcmp(name,"Def")==0)
 		Def_anly(p->child);
 	else if(strcmp(name,"ExtDef")==0){
+		instruct = 1;
 		ExtDef_anly(p);
+		if(p->child != NULL)
+			sem_analysis(p->child);
+		instruct = 0;
+		if(p->brother != NULL)
+			sem_analysis(p->brother);
+		return;
 	}
 	else if(strcmp(name,"Exp")==0){
 		if(p->child != NULL)
@@ -609,7 +626,7 @@ void sem_analysis(node *p){
 		stack_push();
 		if(p->child != NULL)
 			sem_analysis(p->child);
-		stack_pop(head->brother);
+		stack_pop(head);
 		if(p->brother != NULL)
 			sem_analysis(p->brother);
 		return;
