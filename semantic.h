@@ -2,7 +2,8 @@
 #include "symbol_table.h"
 #include "node.h"
 
-int instruct = 0;//表示是否在结构体定义中
+int instruct = 0;//表示当前遍历是否在结构体定义中
+char func_return[20];//记录当前遍历函数的返回类型
 
 void sem_analysis(node *p);
 
@@ -565,6 +566,8 @@ void FunDec_def(node *p){
 
 void ExtDef_anly(node* p){//p is the node of Extdef
 	if(strcmp(p->child->brother->name,"FunDec")==0){//func defiend
+		memset(func_return,0,sizeof(func_return));
+		strcpy(func_return,p->child->node_value);
 		FunDec_def(p);
 	}
 	else if(strcmp(p->child->child->name,"StructSpecifier")==0){
@@ -597,6 +600,24 @@ void ExtDef_anly(node* p){//p is the node of Extdef
 			}
 		}
 	}
+}
+
+void Stmt_anly(node *p){//p is the first child of the Stmt
+	if(p->brother->type == 1 || p->brother->type == 5){//int
+		if(strcmp(func_return,"int") == 0){
+			return;
+		}
+	}
+	else if(p->brother->type == 2 || p->brother->type == 6){//float
+		if(strcmp(func_return,"float") == 0){
+			return;
+		}
+	}
+	else if(strcmp(func_return,p->brother->node_value)==0){
+		return;
+	}
+	else
+		printf("Error type 8 at line %d: The return type mismatched\n",p->brother->line);
 }
 
 void sem_analysis(node *p){		
@@ -639,6 +660,11 @@ void sem_analysis(node *p){
 			sem_analysis(temp);
 		}
 		return;
+	}
+	else if(strcmp(name,"Stmt")==0){
+		if(strcmp(p->child->name,"RETURN")==0){
+			Stmt_anly(p->child);
+		}
 	}
 	/*else if(strcmp(name,"StructSpecifier")==0){
 		if(strcmp(p->child->brother->name,"OptTag") == 0){

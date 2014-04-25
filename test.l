@@ -49,7 +49,7 @@ relop		>|<|>=|<=|==|!=
 [~!@#$%^&:]	{is_error = 1; printf("Error type A at line %d: Mysterious character\'%s\'\n",yylineno,yytext);}
 "="		{yylval.node_type = init_node("ASSIGNOP", yytext); return ASSIGNOP; }
 struct 	        {yylval.node_type = init_node("STRUCT",yytext);return STRUCT;}
-return 	        {yylval.node_type = init_node("RETUEN",yytext);return RETURN;}
+return 	        {yylval.node_type = init_node("RETURN",yytext);return RETURN;}
 if 	        {yylval.node_type = init_node("IF",yytext);return IF;}
 else		{yylval.node_type = init_node("ELSE",yytext);return ELSE;}
 while		{yylval.node_type = init_node("WHILE",yytext);return WHILE;}
