@@ -134,9 +134,10 @@ void exp_cal(node* exp){//exp is the node exp
 					exp->node_float = right->node_float;
 				}
 			}
+		return;
 		}
-		else
-			printf("Error type 5 at line %d:  Type mismatched\n",exp->line);
+		exp->type = left->type;
+		printf("Error type 5 at line %d:  Type mismatched\n",exp->line);
 	}
 	//-------------------------------------------------Exp AND Exp
 	else if(exp->type == 8){
@@ -262,9 +263,10 @@ void exp_cal(node* exp){//exp is the node exp
 				exp->type = 2;
 				exp->node_float = left->node_float + right->node_float;
 			}
+		return;
 		}
-		else
-			printf("Error type 7 at line %d:  Operands type mismatched \n",exp->line);
+		exp->type = 0;
+		printf("Error type 7 at line %d:  Operands type mismatched \n",exp->line);
 	}
 
 	//-------------------------------------------------Exp MINUS Exp
@@ -280,9 +282,10 @@ void exp_cal(node* exp){//exp is the node exp
 				exp->type = 2;
 				exp->node_float = left->node_float - right->node_float;
 			}
+		return;
 		}
-		else
-			printf("Error type 5 at line %d:  Operands type mismatched \n",exp->line);
+		exp->type = 0;
+		printf("Error type 7 at line %d:  Operands type mismatched \n",exp->line);
 	}
 
 	//--------------------------------------------------Exp STAR Exp
@@ -298,9 +301,10 @@ void exp_cal(node* exp){//exp is the node exp
 				exp->type = 2;
 				exp->node_float = left->node_float * right->node_float;
 			}
+		return;
 		}
-		else
-			printf("Error type 5 at line %d:  Operands type mismatched \n",exp->line);
+		exp->type = 0;
+		printf("Error type 7 at line %d:  Operands type mismatched \n",exp->line);
 	}
 
 	//--------------------------------------------------Exp DIV Exp
@@ -316,9 +320,10 @@ void exp_cal(node* exp){//exp is the node exp
 				exp->type = 2;
 				exp->node_float = left->node_float / right->node_float;
 			}
+		return;
 		}
-		else
-			printf("Error type 5 at line %d:  Operands type mismatched \n",exp->line);
+		exp->type = 0;
+		printf("Error type 7 at line %d:  Operands type mismatched \n",exp->line);
 	}
 
 	//--------------------------------------------------LP Exp RP
@@ -351,6 +356,7 @@ void exp_cal(node* exp){//exp is the node exp
 
 	//---------------------------------------------------ID LP Args RP
 	else if(exp->type == 18){
+		exp->type = 0;
 		if(Find(exp->child->node_value)==0){
 			printf("Error type 2 at line %d: Function %s is not defined \n",exp->line,exp->child->node_value);
 		}
@@ -371,6 +377,7 @@ void exp_cal(node* exp){//exp is the node exp
 
 	//---------------------------------------------------ID LP RP
 	else if(exp->type == 19){
+		exp->type = 0;
 		if(Find(exp->child->node_value)==0){
 			printf("Error type 2 at line %d: Function %s is not defined \n",exp->line,exp->child->node_value);
 		}
@@ -409,13 +416,12 @@ void exp_cal(node* exp){//exp is the node exp
 	else if(exp->type == 21){	
 		exp->type = 0;
 		strcpy(exp->node_value,exp->child->node_value);
-		printf("kind: %d\n",get_kind(exp->child->node_value));
 		if(Find(exp->child->node_value) == 0){
 			printf("Error type 1 at line %d: Variable is not defined \n",exp->line);
-			printf("Error type 13 at line %d: Illegal use of “.”",exp->line);
+			printf("Error type 13 at line %d: Illegal use of “.”\n",exp->line);
 		}
 		else if(get_kind(exp->child->node_value) != 5){
-			printf("Error type 13 at line %d: Illegal use of “.”",exp->line);
+			printf("Error type 13 at line %d: Illegal use of “.”\n",exp->line);
 		}
 		else if(strcmp(FindStruct(exp->child->node_value,exp->child->brother->brother->node_value),"NULL") == 0){
 			printf("Error type 14 at line %d: Un-existed field %s\n", exp->line,exp->child->brother->brother->node_value);
@@ -571,6 +577,7 @@ void ExtDef_anly(node* p){//p is the node of Extdef
 		FunDec_def(p);
 	}
 	else if(strcmp(p->child->child->name,"StructSpecifier")==0){
+		instruct = 1;
 		node* structspecifer = p->child->child;//structspecifer
 		if(structspecifer->child->brother->brother != NULL){//define
 			if(Find(structspecifer->node_value)==1){
@@ -616,8 +623,7 @@ void Stmt_anly(node *p){//p is the first child of the Stmt
 	else if(strcmp(func_return,p->brother->node_value)==0){
 		return;
 	}
-	else
-		printf("Error type 8 at line %d: The return type mismatched\n",p->brother->line);
+	printf("Error type 8 at line %d: The return type mismatched\n",p->brother->line);
 }
 
 void sem_analysis(node *p){		
@@ -626,7 +632,6 @@ void sem_analysis(node *p){
 	if(strcmp(name,"Def")==0)
 		Def_anly(p->child);
 	else if(strcmp(name,"ExtDef")==0){
-		instruct = 1;
 		ExtDef_anly(p);
 		if(p->child != NULL)
 			sem_analysis(p->child);
@@ -662,8 +667,13 @@ void sem_analysis(node *p){
 		return;
 	}
 	else if(strcmp(name,"Stmt")==0){
+		if(p->child != NULL)
+			sem_analysis(p->child);
 		if(strcmp(p->child->name,"RETURN")==0){
 			Stmt_anly(p->child);
+		if(p->brother != NULL)
+			sem_analysis(p->brother);
+		return;
 		}
 	}
 	/*else if(strcmp(name,"StructSpecifier")==0){

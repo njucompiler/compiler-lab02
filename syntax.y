@@ -6,15 +6,11 @@
 #include <stdarg.h>
 #include "node.h"
 #include "lex.yy.c"
-//#include "type.h"
-//#include "symbol_table.h"
 #include "semantic.h"
 
 void show_tree(node *p, int depth);
 node *reduction(char *name,int line,int num,...);
 void free_tree(node *p);
-//void exp_cal(node* exp,node* left,node* op,node* rigth);
-//void minus(node* exp,node* left);
 %}
 
 %union { 
@@ -45,7 +41,7 @@ void free_tree(node *p);
 
 %%
 Program		
-	:	ExtDefList			{$$ = reduction("Program", @1.first_line,1, $1);printf("\n");if(!is_error){	Stackhead_init();sem_analysis($$);show_tree($$, 0);} free_tree($$); }
+	:	ExtDefList			{$$ = reduction("Program", @1.first_line,1, $1);printf("\n");if(!is_error){	Stackhead_init();sem_analysis($$);/*show_tree($$, 0);*/} free_tree($$); }
 	;
 ExtDefList
 	:	ExtDef ExtDefList		{ $$ = reduction("ExtDefList", @1.first_line,2,$1, $2); }
@@ -164,7 +160,6 @@ node *reduction(char *name,int line,int num,...){
 	p->type = 1;
 	p->line = line;
 	strcpy(p->name,name);
-	//strcpy(p->node_value,name);
 	va_start(ap,num);
 	if(num == 0){
 		va_end(ap);
@@ -184,67 +179,8 @@ node *reduction(char *name,int line,int num,...){
 	return p;
 	}
 } 
-/*
-void exp_cal(node* exp,node* left,node* op,node* rigth){//the anlysis of node exp
-	if(left->type != rigth->type){
-		//printf("Error type 16 at line %d:Type mismatched",exp->line);
-		return;
-	}
-	else{
-		if(left->type == 1 || left->type == 5)
-			exp->type = 5;
-		else
-			exp->type = 6;
-
-		if(strcmp(op->name,"ASSIGNOP")==0){//ASSIGNOP
-
-		}
-		else if(strcmp(op->name,"AND")==0){//AND
-
-		}
-		else if(strcmp(op->name,"OR")==0){//OR
-
-		}
-		else if(strcmp(op->name,"PLUS")==0){//PLUS
-			if(left->type == 1)
-				exp->node_int = left->node_int + rigth->node_int;
-			else
-				exp->node_float = left->node_float + rigth->node_float;
-		}
-		else if(strcmp(op->name,"MINUS")==0){//MINUS
-			if(left->type == 1)
-				exp->node_int = left->node_int - rigth->node_int;
-			else
-				exp->node_float = left->node_float - rigth->node_float;
-		}
-		else if(strcmp(op->name,"STAR")==0){//STAR
-			if(left->type == 1)
-				exp->node_int = left->node_int * rigth->node_int;
-			else
-				exp->node_float = left->node_float * rigth->node_float;
-		}
-		else if(strcmp(op->name,"DIV")==0){//DIV
-			if(left->type == 1)
-				exp->node_int = left->node_int / rigth->node_int;
-			else
-				exp->node_float = left->node_float / rigth->node_float;
-		}
-	}
-
-}
-
-void minus(node* exp,node* left){
-	exp->type = left->type;
-	if(left->type == 1 || left->type == 5){
-		exp->node_int = left->node_int;
-	}
-	else
-		exp->node_float = left->node_float;
-}*/
 
 void show_tree(node *p, int depth) {	
-	//printf("\n");
-	//printf("depth:%d\n",depth);
 	int i;	
 	for(i=0;i<depth;i++)
 		printf(" ");	
