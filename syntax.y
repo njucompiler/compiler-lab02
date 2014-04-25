@@ -45,7 +45,7 @@ void free_tree(node *p);
 
 %%
 Program		
-	:	ExtDefList			{$$ = reduction("Program", @1.first_line,1, $1);printf("\n");if(!is_error){sem_analysis($$);show_tree($$, 0);} free_tree($$); }
+	:	ExtDefList			{$$ = reduction("Program", @1.first_line,1, $1);printf("\n");if(!is_error){	Stackhead_init();sem_analysis($$);show_tree($$, 0);} free_tree($$); }
 	;
 ExtDefList
 	:	ExtDef ExtDefList		{ $$ = reduction("ExtDefList", @1.first_line,2,$1, $2); }

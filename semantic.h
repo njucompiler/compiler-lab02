@@ -592,7 +592,6 @@ void ExtDef_anly(node* p){//p is the node of Extdef
 void sem_analysis(node *p){		
 	char name[20];
 	strcpy(name,p->name);
-	Stackhead_init();
 	if(strcmp(name,"Def")==0)
 		Def_anly(p->child);
 	else if(strcmp(name,"ExtDef")==0){
