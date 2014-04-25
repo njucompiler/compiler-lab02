@@ -197,11 +197,11 @@ int Args_match(node *ID){//函数参数匹配
 			if(temp->next!=NULL)
 				temp = temp->next;
 			else break;
-			if(!Args->child->brother)
+			if(Args->child->brother!=NULL)
 				Args = Args->child->brother->brother;
 			else return 0;
 		}
-		if(Args->child->brother)
+		if(Args->child->brother==NULL)
 			return 1;
 		else return 0;
 	}
