@@ -243,7 +243,6 @@ void INT_Insert(char *name,int value){
 		SymbolTable[i]->child = NULL;
 		if(head->child == NULL){
 			head->child = SymbolTable[i];
-			head->brother = NULL;
 		}
 		else{
 			SymbolTable[i]->scope = head->child;;
@@ -260,7 +259,6 @@ void INT_Insert(char *name,int value){
 		p->child = NULL;
 		if(head->child == NULL){
 			head->child = p;
-			head->brother = NULL;
 		}
 		else{
 			SymbolTable[i]->scope = head->child;
@@ -278,7 +276,6 @@ void FLOAT_Insert(char *name,float value){
 		SymbolTable[i]->child = NULL;
 		if(head->child == NULL){
 			head->child = SymbolTable[i];
-			head->brother = NULL;
 		}
 		else{
 			SymbolTable[i]->scope = head->child;
@@ -295,7 +292,6 @@ void FLOAT_Insert(char *name,float value){
 		p->child = NULL;
 		if(head->child == NULL){
 			head->child = p;
-			head->brother = NULL;
 		}
 		else{
 			SymbolTable[i]->scope = head->child;
@@ -372,7 +368,6 @@ void FUNC_Insert(node *ExtDef){
 			}
 			if(head->child == NULL){
 				head->child = SymbolTable[i];
-				head->brother = NULL;
 			}
 			else{
 				SymbolTable[i]->scope = head->child;
@@ -441,7 +436,6 @@ void FUNC_Insert(node *ExtDef){
 			}
 			if(head->child == NULL){
 				head->child = p;
-				head->brother = NULL;
 			}
 			else{
 				SymbolTable[i]->scope = head->child;
@@ -466,7 +460,6 @@ void FUNC_Insert(node *ExtDef){
 			SymbolTable[i]->brother = NULL;
 			if(head->child == NULL){
 				head->child = SymbolTable[i];
-				head->brother = NULL;
 			}
 			else{
 				SymbolTable[i]->scope = head->child;
@@ -490,7 +483,6 @@ void FUNC_Insert(node *ExtDef){
 			p->brother = NULL;
 			if(head->child == NULL){
 				head->child = p;
-				head->brother = NULL;
 			}
 			else{
 				SymbolTable[i]->scope = head->child;
@@ -510,7 +502,6 @@ void varStruct_Insert(char *name,char *spec){
 		SymbolTable[i]->child = NULL;
 		if(head->child == NULL){
 			head->child = SymbolTable[i];
-			head->brother = NULL;
 		}
 		else{
 			SymbolTable[i]->scope = head->child;;
@@ -527,7 +518,6 @@ void varStruct_Insert(char *name,char *spec){
 		p->child = NULL;
 		if(head->child == NULL){
 			head->child = p;
-			head->brother = NULL;
 		}
 		else{
 			SymbolTable[i]->scope = head->child;
@@ -585,7 +575,6 @@ void STRUCT_Insert(node *p){
 			}
 			if(head->child == NULL){
 				head->child = SymbolTable[i];
-				head->brother = NULL;
 			}
 			else{
 				SymbolTable[i]->scope = head->child;
@@ -640,7 +629,6 @@ void STRUCT_Insert(node *p){
 			}
 			if(head->child == NULL){
 				head->child = s;
-				head->brother = NULL;
 			}
 			else{
 				SymbolTable[i]->scope = head->child;
@@ -685,7 +673,6 @@ void ARRAY_Insert(node *VarDec,char *name,char *spec){
 		}
 		if(head->child == NULL){
 			head->child = SymbolTable[i];
-			head->brother = NULL;
 		}
 		else{
 			SymbolTable[i]->scope = head->child;
@@ -718,7 +705,6 @@ void ARRAY_Insert(node *VarDec,char *name,char *spec){
 		}
 		if(head->child == NULL){
 			head->child = temp;
-			head->brother = NULL;
 		}
 		else{
 			SymbolTable[i]->scope = head->child;
